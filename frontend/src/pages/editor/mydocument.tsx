@@ -1,5 +1,6 @@
 import React from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import { UserMetaDataItem } from "./types";
 
 const styles = StyleSheet.create({
   page: {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Mydocument = ({ name, metadatas }) => (
+const Mydocument = ({ name, metadatas }: { name: string, metadatas: UserMetaDataItem[] }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Contact */}

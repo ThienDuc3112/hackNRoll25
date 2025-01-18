@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, useState } from "react";
 import { X, Download, Plus } from "lucide-react";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 
@@ -7,6 +7,10 @@ import Mydocument from "./mydocument";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
+import { IdItemType, ItemType, UserMetaDataItem } from "./types";
+import { SetStateAction } from "jotai";
+
+type StateSetter<T> = Dispatch<SetStateAction<T>>
 
 /** Contact info & PDF export components (unchanged) */
 const ContactInfo = ({ value, onChange, onRemove }) => {
@@ -35,7 +39,7 @@ const ContactInfo = ({ value, onChange, onRemove }) => {
   );
 };
 
-const ExportHandler = ({ name, metadatas }) => {
+const ExportHandler = ({ name, metadatas }: { name: string, metadatas: UserMetaDataItem[] }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   if (showPreview) {
@@ -84,12 +88,6 @@ const ExportHandler = ({ name, metadatas }) => {
 };
 
 /** Metadata shape for contact info. */
-type UserMetaDataItem = {
-  id: number;
-  value: string;
-  isUrl?: boolean;
-  url?: string;
-};
 
 const Editor = () => {
   // Divider state for left & right panes
@@ -113,11 +111,6 @@ const Editor = () => {
   // For adding new subsections from the menu
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
-  const [subsections, setSubsections] = useState([
-    "Subsection 1",
-    "Subsection 2",
-    "Subsection 3",
-  ]);
 
   /** Contact info handlers */
   const addMetadatas = () => {
@@ -149,11 +142,7 @@ const Editor = () => {
 
   /** Add new subsection from the left sidebar. */
   const addNewSubsection = () => {
-    if (newSubsectionName.trim()) {
-      setSubsections([...subsections, newSubsectionName.trim()]);
-      setNewSubsectionName("");
-      setShowNameInput(false);
-    }
+    console.log("addNewSubsection()")
   };
 
   return (
@@ -161,71 +150,17 @@ const Editor = () => {
       {/** DnD Context for the entire workspace */}
       {/** If you need to sort top-level layout items, you can wrap them in a SortableContext */}
       {/** ==================== LEFT SIDEBAR ==================== */}
-      <div
-        className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
-        style={{ width: `${dividerPosition}%` }}
-      >
-        {/** Render the items from the menu */}
-        {editorState.menu.map((itemId, i) => {
-          const item = editorState.itemMap[itemId];
-          if (item.type === "SUBSECTION") {
-            return (
-              <Subsection
-                key={i}
-                onRemove={(_: string) => { }}
-                id={`menu-${item.id}`}
-                subSection={item}
-                isDropped={false}
-              />
-            );
-          } else {
-            return <p key={i}>Bullet point</p>;
-          }
-        })}
-
-        {/** "Add Subsection" UI */}
-        {showNameInput ? (
-          <div className="w-full p-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg">
-            <input
-              type="text"
-              value={newSubsectionName}
-              onChange={(e) => setNewSubsectionName(e.target.value)}
-              className="w-full p-2 mb-2 border rounded"
-              placeholder="New section name"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && newSubsectionName.trim()) {
-                  newSection(newSubsectionName, newSubsectionName);
-                  setNewSubsectionName("");
-                }
-              }}
-            />
-            <div className="flex space-x-2">
-              <button
-                onClick={addNewSubsection}
-                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Add
-              </button>
-              <button
-                onClick={() => {
-                  setShowNameInput(false);
-                  setNewSubsectionName("");
-                }}
-                className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => setShowNameInput(true)}
-            className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
-          >
-            + Add Subsection
-          </button>
-        )}
-      </div>
+      <LeftBar
+        dividerPosition={dividerPosition}
+        addNewSubsection={addNewSubsection}
+        newSection={newSection}
+        setNewSubsectionName={setNewSubsectionName}
+        newSubsectionName={newSubsectionName}
+        itemMap={editorState.itemMap}
+        menu={editorState.menu}
+        showNameInput={showNameInput}
+        setShowNameInput={setShowNameInput}
+      />
 
       {/** ==================== DRAGGABLE DIVIDER ==================== */}
       <div
@@ -327,5 +262,95 @@ const Editor = () => {
     </div>
   );
 };
+
+type LeftBarProps = {
+  dividerPosition: number
+  menu: IdItemType[]
+  itemMap: Record<string, ItemType>
+  showNameInput: boolean
+  setShowNameInput: StateSetter<boolean>
+  newSubsectionName: string
+  setNewSubsectionName: StateSetter<string>
+  newSection: (id: string, name: string) => void
+  addNewSubsection: () => void
+}
+
+const LeftBar = ({
+  dividerPosition,
+  menu,
+  itemMap,
+  showNameInput,
+  setShowNameInput,
+  newSubsectionName,
+  setNewSubsectionName,
+  newSection,
+  addNewSubsection
+}: LeftBarProps) => {
+  return <div
+    className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
+    style={{ width: `${dividerPosition}%` }}
+  >
+    {/** Render the items from the menu */}
+    {menu.map((itemId, i) => {
+      const item = itemMap[itemId];
+      if (item.type === "SUBSECTION") {
+        return (
+          <Subsection
+            key={i}
+            onRemove={(_: string) => { }}
+            id={`menu-${item.id}`}
+            subSection={item}
+            isDropped={false}
+          />
+        );
+      } else {
+        return <p key={i}>Bullet point</p>;
+      }
+    })}
+
+    {/** "Add Subsection" UI */}
+    {showNameInput ? (
+      <div className="w-full p-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg">
+        <input
+          type="text"
+          value={newSubsectionName}
+          onChange={(e) => setNewSubsectionName(e.target.value)}
+          className="w-full p-2 mb-2 border rounded"
+          placeholder="New section name"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && newSubsectionName.trim()) {
+              newSection(newSubsectionName, newSubsectionName);
+              setNewSubsectionName("");
+            }
+          }}
+        />
+        <div className="flex space-x-2">
+          <button
+            onClick={addNewSubsection}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Add
+          </button>
+          <button
+            onClick={() => {
+              setShowNameInput(false);
+              setNewSubsectionName("");
+            }}
+            className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ) : (
+      <button
+        onClick={() => setShowNameInput(true)}
+        className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
+      >
+        + Add Subsection
+      </button>
+    )}
+  </div>
+}
 
 export default Editor;
