@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { SectionType, UserMetaDataItem } from "./types";
 import { ContactInfo, ExportHandler } from "./helpers";
 import Button from "./button";
 import { Plus } from "lucide-react";
 import { Section } from "./section";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 type ResumeViewProps = {
   dividerPosition: number;
@@ -18,11 +19,14 @@ export const ResumeView = ({
 }: ResumeViewProps) => {
   // Resume header fields
   const [name, setName] = useState("");
+
   // For adding brand-new sections
   const [newSectionName, setNewSectionName] = useState<string>("");
 
-  const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
+  const sectionIds = useMemo(() => sections.map(sex => sex.id), [sections])
+
   /** Contact info handlers */
+  const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
   const addMetadatas = () => {
     setMetadatas([...metadatas, { id: Date.now(), value: "" }]);
   };
@@ -119,9 +123,11 @@ export const ResumeView = ({
            * SortableContext that contains the sections
            * We'll show them inside this A4 container
            */}
-          {sections.map((section) => (
-            <Section key={section.id} section={section} />
-          ))}
+          <SortableContext strategy={verticalListSortingStrategy} items={sectionIds} >
+            {sections.map((section) => (
+              <Section key={section.id} section={section} />
+            ))}
+          </SortableContext>
         </div>
       </div>
     </div>

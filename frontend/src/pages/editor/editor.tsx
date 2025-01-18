@@ -8,7 +8,7 @@ const Editor = () => {
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(50);
   // Access your editor state & actions
-  const { editorState, newSection } = useEditorAtom();
+  const { editorState, newSection, moveSection } = useEditorAtom();
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -24,6 +24,24 @@ const Editor = () => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   };
+
+  const onDragStart = (e: DragStartEvent) => {
+    console.log(e)
+  }
+
+  const onDragMove = (e: DragMoveEvent) => {
+
+  }
+
+  const onDragEnd = (e: DragEndEvent) => {
+    if (e.active.data.current?.type === "SECTION") {
+      if (!e.over || !e.over.data.current) {
+        return;
+      }
+      let targetIndex = e.over.data.current!.sortable.index
+      moveSection(e.active.id as string, targetIndex)
+    }
+  }
 
   return (
     <DndContext
@@ -56,16 +74,5 @@ const Editor = () => {
   );
 };
 
-const onDragStart = (e: DragStartEvent) => {
-  console.log(e)
-}
-
-const onDragMove = (e: DragMoveEvent) => {
-
-}
-
-const onDragEnd = (e: DragEndEvent) => {
-
-}
 
 export default Editor;
