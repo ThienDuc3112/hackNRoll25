@@ -93,9 +93,6 @@ const Editor = () => {
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(50);
 
-  // For adding brand-new sections
-  const [newSectionName, setNewSectionName] = useState<string>("");
-
   // Access your editor state & actions
   const { editorState, newSection } = useEditorAtom();
 
@@ -104,26 +101,10 @@ const Editor = () => {
   // Track item/section being dragged
   //const [activeId, setActiveId] = useState<UniqueIdentifier | null>("");
 
-  // Resume header fields
-  const [name, setName] = useState("");
-  const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
-
   // For adding new subsections from the menu
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
 
-  /** Contact info handlers */
-  const addMetadatas = () => {
-    setMetadatas([...metadatas, { id: Date.now(), value: "" }]);
-  };
-  const removeMetadatas = (id: number) => {
-    setMetadatas(metadatas.filter((field) => field.id !== id));
-  };
-  const updateMetadatas = (id: number, value: string) => {
-    setMetadatas(
-      metadatas.map((field) => (field.id === id ? { ...field, value } : field))
-    );
-  };
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -170,17 +151,9 @@ const Editor = () => {
 
       {/** ==================== RIGHT SIDE (Resume Document) ==================== */}
       <RightSide
-        addMetadatas={addMetadatas}
-        updateMetadatas={updateMetadatas}
-        name={name}
-        setName={setName}
         newSection={newSection}
-        setNewSectionName={setNewSectionName}
-        newSectionName={newSectionName}
-        metadatas={metadatas}
         dividerPosition={dividerPosition}
         sections={editorState.sections}
-        removeMetadatas={removeMetadatas}
       />
       {/** OPTIONAL: DragOverlay for custom drag previews */}
     </div >
@@ -189,31 +162,35 @@ const Editor = () => {
 
 type RightSideProps = {
   dividerPosition: number
-  newSectionName: string
-  setNewSectionName: StateSetter<string>
   newSection: (id: string, name: string) => void
   sections: SectionType[]
-  metadatas: UserMetaDataItem[]
-  name: string
-  setName: StateSetter<string>
-  updateMetadatas: (id: number, value: string) => void
-  removeMetadatas: (id: number) => void
-  addMetadatas: () => void
 }
 
 const RightSide = ({
   sections,
   dividerPosition,
-  metadatas,
-  name,
-  setName,
-  newSectionName,
-  setNewSectionName,
   newSection,
-  updateMetadatas,
-  removeMetadatas,
-  addMetadatas
 }: RightSideProps) => {
+
+  // Resume header fields
+  const [name, setName] = useState("");
+  // For adding brand-new sections
+  const [newSectionName, setNewSectionName] = useState<string>("");
+
+  const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
+  /** Contact info handlers */
+  const addMetadatas = () => {
+    setMetadatas([...metadatas, { id: Date.now(), value: "" }]);
+  };
+  const removeMetadatas = (id: number) => {
+    setMetadatas(metadatas.filter((field) => field.id !== id));
+  };
+  const updateMetadatas = (id: number, value: string) => {
+    setMetadatas(
+      metadatas.map((field) => (field.id === id ? { ...field, value } : field))
+    );
+  };
+
   return <div
     className="flex overflow-y-auto flex-col h-full bg-gray-100"
     style={{ width: `${100 - dividerPosition}%` }}
