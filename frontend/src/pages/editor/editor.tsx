@@ -11,9 +11,9 @@ import { Textarea } from "./textarea";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
+import BulletPoint from "./bulletpoint";
 
 ////////////////////////////////////////////////////////////////////////
-
 const ExportHandler = ({ name }) => {
   const [showPreview, setShowPreview] = useState(false);
 
@@ -245,7 +245,7 @@ const Editor = () => {
               Button 3
             </Button> */}
           </div>
-
+        
           {/* Main Content */}
           <div className=" scroll-m-0 flex-1 p-2 flex items-center justify-center">
             <div
