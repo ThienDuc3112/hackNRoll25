@@ -1,6 +1,6 @@
 import React from "react";
 import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
-import { UserMetaDataItem } from "./types";
+import { UserMetaDataItem, SectionType } from "./types";
 
 const styles = StyleSheet.create({
   page: {
@@ -53,7 +53,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const Mydocument = ({ name, metadatas }: { name: string, metadatas: UserMetaDataItem[] }) => (
+const Mydocument = ({
+  name,
+  metadatas,
+  sections,
+}: {
+  name: string;
+  metadatas: UserMetaDataItem[];
+  sections: SectionType[];
+}) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Contact */}
@@ -72,17 +80,17 @@ const Mydocument = ({ name, metadatas }: { name: string, metadatas: UserMetaData
       </View>
 
       {/* Sections */}
-      {/* {sections.map((section, index) => (
-        <View key={index} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.name}</Text>
-          {section.fields.map((field) => (
+      {sections.map((section) => (
+        <View key={section.id} style={styles.section}>
+          <Text style={styles.sectionTitle}>{section.displayName}</Text>
+          {sections.map((field) => (
             <View key={field.id} style={styles.field}>
-              <Text style={styles.fieldLabel}>{field.label}</Text>
-              <Text style={styles.fieldContent}>{field.content}</Text>
+              {/* <Text style={styles.fieldLabel}>{field.label}</Text>
+              <Text style={styles.fieldContent}>{field.content}</Text> */}
             </View>
           ))}
         </View>
-      ))} */}
+      ))}
     </Page>
   </Document>
 );
