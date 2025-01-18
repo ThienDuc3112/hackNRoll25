@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ItemType } from "./types";
+import { ComponentMetaDataType, ItemType } from "./types";
 
 type ComponentProp = {
   item: ItemType,
@@ -15,7 +15,7 @@ export const Component = (props: ComponentProp) => {
       data: {
         containerId: props.containerId,
         index: props.index,
-      }
+      } as ComponentMetaDataType
     }
   );
   return (

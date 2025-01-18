@@ -29,3 +29,7 @@ export type EditorStateType = {
   itemMap: Record<string, ItemType>
 }
 
+export type ComponentMetaDataType = {
+  containerId: string,
+  index: number,
+}
