@@ -16,6 +16,7 @@ export const Component = (props: ComponentProp) => {
   const { attributes, listeners, transform, setNodeRef, active, transition } = useSortable(
     {
       id: props.item.id,
+      disabled: false,
       data: props.data
     }
   );
@@ -29,8 +30,6 @@ export const Component = (props: ComponentProp) => {
         transform: CSS.Translate.toString(transform),
         transition: transition,
         backgroundColor: active && active.id == props.item.id ? 'blue' : undefined,
-        width: "fit-content",
-        height: "fit-content"
       }}
     >
       {props.item.type === "POINT" ?
