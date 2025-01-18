@@ -10,6 +10,9 @@ from .serializers import (
     SectionCreateSerializer,
     SubSectionCreateSerializer,
     BulletPointCreateSerializer,
+    ResumeDeleteSerializer,
+    SubSectionDeleteSerializer,
+    BulletPointDeleteSerializer,
 )
 from django.conf import settings
 from .models import Resume, Section, SubSection, BulletPoint
@@ -53,6 +56,23 @@ class ResumeViews(APIView):
             return Response({"resume": resume}, status=HTTP_200_OK)
         except Resume.DoesNotExist:
             return Response({"error": "Resume id not found"}, status=404)
+
+    @extend_schema(
+        request=ResumeDeleteSerializer,
+        description='Delete resume',
+    )
+    def delete(self, request: HttpRequest) -> Response:
+        serializer = ResumeDeleteSerializer(data=request.query_params)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'), user=request.user)
+            resume.delete()
+            return Response({"Resume deleted successfully!"}, status=HTTP_200_OK)
+        except Resume.DoesNotExist:
+            return Response({"error": "Resume id not found or you have no permission to delete this resume!"}, status=404)
     
 
 class SectionViews(APIView):
@@ -62,7 +82,6 @@ class SectionViews(APIView):
         request=SectionCreateSerializer,
         description='User create new section for resume',
     )
-
     def post(self, request: HttpRequest) -> Response:
         serializer = SectionCreateSerializer(data=request.data)
 
@@ -105,7 +124,6 @@ class SubSectionViews(APIView):
         request=SubSectionCreateSerializer,
         description='User create new sub section for resume',
     )
-
     def post(self, request: HttpRequest) -> Response:
         serializer = SubSectionCreateSerializer(data=request.data)
 
@@ -131,6 +149,23 @@ class SubSectionViews(APIView):
         )
         response = Response({"sub_section": sub_section.details()}, status=status.HTTP_201_CREATED)
         return response
+
+    @extend_schema(
+        request=SubSectionDeleteSerializer,
+        description='Delete Sub section',
+    )
+    def delete(self, request: HttpRequest) -> Response:
+        serializer = SubSectionDeleteSerializer(data = request.query_params)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            sub_section = SubSection.objects.get(id=serializer.validated_data.get('sub_section_id'), user=request.user)
+            sub_section.delete()
+            return Response({"Subsection deleted successfully"}, status=HTTP_200_OK)
+        except SubSection.DoesNotExist:
+            return Response({"error": "Sub section not found or you have no permission to delete this subsection"}, status=404)
 
 
 class BulletPointViews(APIView):
@@ -164,3 +199,20 @@ class BulletPointViews(APIView):
         )
         response = Response({"bullet_point": bullet_point.details()}, status=status.HTTP_201_CREATED)
         return response
+
+    @extend_schema(
+        request=BulletPointDeleteSerializer,
+        description='Delete Sub section',
+    )
+
+    def delete(self, request: HttpRequest) -> Response:
+        serializer = BulletPointDeleteSerializer(data=request.query_params)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            bullet_point = BulletPoint.objects.get(id=serializer.validated_data.get('bullet_point_id'), user=request.user)
+            bullet_point.delete()
+            return Response({"Bulletpoint deleted successfully"}, status=HTTP_200_OK)
+        except BulletPoint.DoesNotExist:
+            return Response({"error": "Bullet point not found or you have no permission to delete this bullet point"}, status=404)

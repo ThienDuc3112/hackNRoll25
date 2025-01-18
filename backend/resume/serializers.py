@@ -31,3 +31,15 @@ class ResumeGetSerializer(serializers.Serializer):
 
 class SectionGetSerializer(serializers.Serializer):
     resume_id = serializers.IntegerField(required=True)
+
+
+class ResumeDeleteSerializer(serializers.Serializer):
+    resume_id = serializers.IntegerField(required=True)
+
+
+class SubSectionDeleteSerializer(serializers.Serializer):
+    sub_section_id = serializers.IntegerField(required=True)
+
+
+class BulletPointDeleteSerializer(serializers.Serializer):
+    bullet_point_id = serializers.IntegerField(required=True)

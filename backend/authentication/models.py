@@ -15,7 +15,7 @@ class User(AbstractUser):
         return {
             "username": self.username,
             "email": self.email,
-            "bullet_points": self.bullet_points,
-            "sub_sections": self.sub_sections,
-            "resumes": self.resumes,
+            "bullet_points": [bullet_point.details() for bullet_point in self.bullet_points.all()],
+            "sub_sections": [sub_section.details() for sub_section in self.sub_sections.all()],
+            "resumes": [resume.details() for resume in self.resumes.all()],
         }
