@@ -1,9 +1,5 @@
-import React, { useMemo } from "react";
-import { useSortable, SortableContext } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { useAtomValue } from "jotai";
 import { itemMapAtom } from "./state";
-import { Component } from "./component";
 import { SectionType } from "./types";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";
@@ -15,39 +11,12 @@ type SectionProp = {
 export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
 
-  const itemIds = useMemo(() => {
-    return section.items.map((itemId) => `item-${itemId}`);
-  }, [section]);
-
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transition,
-    transform,
-    isDragging,
-  } = useSortable({
-    id: `section-${section.id}`,
-    data: {
-      type: "section",
-    },
-  });
-
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-  };
-
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className={`w-full mb-6 ${isDragging ? "opacity-70" : "opacity-100"}`}
+      className={`w-full mb-6`}
     >
       {/* Section Name */}
       <h3
-        {...attributes}
-        {...listeners}
         className="text-lg font-medium text-gray-800 cursor-move mb-2"
       >
         {section.displayName}
@@ -58,9 +27,8 @@ export const Section = ({ section }: SectionProp) => {
 
       {/* Droppable Area */}
       <div className="min-h-[120px]">
-        <SortableContext items={itemIds}>
-          <div>
-            {/*             
+        <div>
+          {/*             
             {section.items.map((itemId) => (
               <Component key={itemId} item={itemMap[itemId]} />
             ))}
@@ -70,16 +38,15 @@ export const Section = ({ section }: SectionProp) => {
                 <span className="text-gray-400">Drop items here</span>
               </div>
             )} */}
-            {section.items.map((itemId) => {
-              const item = itemMap[itemId];
-              if (item.type == "SUBSECTION") {
-                return <Subsection allowEdit={false} subSection={item} />;
-              } else {
-                return <BulletPoint point={item} />;
-              }
-            })}
-          </div>
-        </SortableContext>
+          {section.items.map((itemId) => {
+            const item = itemMap[itemId];
+            if (item.type == "SUBSECTION") {
+              return <Subsection key={item.id} allowEdit={false} subSection={item} />;
+            } else {
+              return <BulletPoint key={item.id} point={item} />;
+            }
+          })}
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useEditorAtom } from "./state";
-import { SubsectionType } from "./types";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
+import { DndContext, DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
 
 const Editor = () => {
   // Divider state for left & right panes
@@ -26,29 +26,46 @@ const Editor = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex w-full overflow-hidden">
-      {/** ==================== LEFT SIDEBAR ==================== */}
-      <MenuBar
-        dividerPosition={dividerPosition}
-        itemMap={editorState.itemMap}
-        menu={editorState.menu}
-      />
+    <DndContext
+      onDragStart={onDragStart}
+      onDragMove={onDragMove}
+      onDragEnd={onDragEnd}
+    >
+      <div className="fixed inset-0 flex w-full overflow-hidden">
+        {/** ==================== LEFT SIDEBAR ==================== */}
+        <MenuBar
+          dividerPosition={dividerPosition}
+          itemMap={editorState.itemMap}
+          menu={editorState.menu}
+        />
 
-      {/** ==================== DRAGGABLE DIVIDER ==================== */}
-      <div
-        className="w-1 h-full bg-gray-400 cursor-col-resize hover:bg-gray-500"
-        onMouseDown={handleMouseDown}
-      />
+        {/** ==================== DRAGGABLE DIVIDER ==================== */}
+        <div
+          className="w-1 h-full bg-gray-400 cursor-col-resize hover:bg-gray-500"
+          onMouseDown={handleMouseDown}
+        />
 
-      {/** ==================== RIGHT SIDE (Resume Document) ==================== */}
-      <ResumeView
-        newSection={newSection}
-        dividerPosition={dividerPosition}
-        sections={editorState.sections}
-      />
-    </div>
+        {/** ==================== RIGHT SIDE (Resume Document) ==================== */}
+        <ResumeView
+          newSection={newSection}
+          dividerPosition={dividerPosition}
+          sections={editorState.sections}
+        />
+      </div>
+    </DndContext>
   );
 };
 
+const onDragStart = (e: DragStartEvent) => {
+  console.log(e)
+}
+
+const onDragMove = (e: DragMoveEvent) => {
+
+}
+
+const onDragEnd = (e: DragEndEvent) => {
+
+}
 
 export default Editor;
