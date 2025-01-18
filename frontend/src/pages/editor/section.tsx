@@ -1,13 +1,11 @@
 import { useAtomValue } from "jotai";
-import { activeAtom, itemMapAtom } from "./state";
+import { itemMapAtom } from "./state";
 import { IdItemType, SectionType } from "./types";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
 import { useCallback } from "react";
-import { createPortal } from "react-dom";
-import { DragOverlay } from "@dnd-kit/core";
 
 type SectionProp = {
   section: SectionType;
@@ -15,7 +13,6 @@ type SectionProp = {
 
 export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
-  const activeId = useAtomValue(activeAtom)
 
   const ItemView = useCallback(({ itemId, parentContainerId }: { itemId: IdItemType, parentContainerId: string }) => {
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -31,7 +28,7 @@ export const Section = ({ section }: SectionProp) => {
     }
 
     if (isDragging) {
-      return <div className="h-[120px] bg-gray-50"
+      return <div className="h-[40px] bg-gray-50"
         ref={setNodeRef}
         {...attributes}
         {...listeners}
@@ -106,14 +103,6 @@ export const Section = ({ section }: SectionProp) => {
           <SortableContext items={section.items} strategy={verticalListSortingStrategy}>
             {section.items.map((itemId) => <ItemView key={itemId} parentContainerId={section.id} itemId={itemId} />)}
           </SortableContext>
-          {
-            activeId && activeId.type == "ITEM" && createPortal(
-              <DragOverlay>
-                {<ItemView parentContainerId="" itemId={activeId.id as string} />}
-              </DragOverlay>,
-              document.body
-            )
-          }
         </div>
       </div>
     </div>
