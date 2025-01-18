@@ -1,11 +1,7 @@
-import { useState } from 'react'
+import Editor from "./pages/editor/editor";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>App</>
-  )
+  return <Editor />;
 }
 
-export default App
+export default App;
