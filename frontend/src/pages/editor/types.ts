@@ -29,3 +29,9 @@ export type EditorStateType = {
   itemMap: Record<string, ItemType>
 }
 
+export type UserMetaDataItem = {
+  id: number;
+  value: string;
+  isUrl?: boolean;
+  url?: string;
+};

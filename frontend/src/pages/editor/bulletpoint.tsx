@@ -1,5 +1,3 @@
-import React from "react";
-
 const BulletPoint = ({ title }) => {
   return (
     <div>
