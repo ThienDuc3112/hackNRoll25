@@ -1,5 +1,3 @@
-import React from "react";
-
 const Button = ({ onClick, children, variant = "primary" }) => {
   const baseStyles =
     "px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center gap-2";
@@ -13,9 +11,8 @@ const Button = ({ onClick, children, variant = "primary" }) => {
   return (
     <button
       onClick={onClick}
-      className={`${baseStyles} ${
-        (variants as unknown as Record<string, string>)[variant]
-      }`}
+      className={`${baseStyles} ${(variants as unknown as Record<string, string>)[variant]
+        }`}
     >
       {children}
     </button>
