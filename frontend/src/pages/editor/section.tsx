@@ -1,4 +1,4 @@
-import { Section as SectionType } from "./types";
+import { SectionType as SectionType } from "./types";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Component } from "./component";
 import { useAtomValue } from "jotai";

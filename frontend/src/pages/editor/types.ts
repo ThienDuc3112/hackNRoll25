@@ -1,31 +1,31 @@
-export type IdItem = string
+export type IdItemType = string
 
-export type Point = {
-  id: IdItem,
+export type PointType = {
+  id: IdItemType,
   type: "POINT",
   data: string
 }
 
-export type Subsection = {
-  id: IdItem,
+export type SubsectionType = {
+  id: IdItemType,
   type: "SUBSECTION",
   title: string,
   timeRange: string,
   description: string,
-  children: Point[]
+  children: PointType[]
 }
 
-export type Item = Point | Subsection
+export type ItemType = PointType | SubsectionType
 
-export type Section = {
+export type SectionType = {
   id: string,
   displayName: string,
-  items: IdItem[]
+  items: IdItemType[]
 }
 
-export type EditorState = {
-  menu: IdItem[]
-  sections: Record<string, Section>,
-  itemMap: Record<string, Item>
+export type EditorStateType = {
+  menu: IdItemType[]
+  sections: Record<string, SectionType>,
+  itemMap: Record<string, ItemType>
 }
 

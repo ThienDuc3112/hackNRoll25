@@ -1,9 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Item } from "./types";
+import { ItemType } from "./types";
 
 type ComponentProp = {
-  item: Item,
+  item: ItemType,
   data: {
     sortable: {
       containerId: string,

@@ -1,14 +1,15 @@
 import { atom, useAtom } from "jotai"
-import { EditorState, IdItem, Item, Section } from "./types"
+import { EditorStateType, IdItemType, ItemType, SectionType } from "./types"
 
-export const editorAtom = atom<EditorState>({
+export const editorAtom = atom<EditorStateType>({
   menu: ["test", "skill", "education"],
   sections: {
     "default": {
       id: "default",
       displayName: "Default Section",
       items: ["test2"]
-    }
+    },
+
   },
   itemMap: {
     test: {
@@ -32,11 +33,11 @@ export const editorAtom = atom<EditorState>({
       id: "education"
     },
   }
-} as EditorState)
+} as EditorStateType)
 
-export const itemMapAtom = atom<Record<string, Item>>((get) => get(editorAtom).itemMap)
+export const itemMapAtom = atom<Record<string, ItemType>>((get) => get(editorAtom).itemMap)
 
-const filterSection = (sections: Record<string, Section>, itemId: IdItem): Record<string, Section> => {
+const filterSection = (sections: Record<string, SectionType>, itemId: IdItemType): Record<string, SectionType> => {
   const newSections = { ...sections }
   for (const sectionKey in newSections) {
     newSections[sectionKey] = { ...newSections[sectionKey] }
