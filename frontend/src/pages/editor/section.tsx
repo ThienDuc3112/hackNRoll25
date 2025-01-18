@@ -37,13 +37,13 @@ export const Section = ({ section }: SectionProp) => {
   };
 
   return (
-    <div 
-      ref={setNodeRef} 
+    <div
+      ref={setNodeRef}
       style={style}
-      className={`w-full mb-6 ${isDragging ? 'opacity-70' : 'opacity-100'}`}
+      className={`w-full mb-6 ${isDragging ? "opacity-70" : "opacity-100"}`}
     >
       {/* Section Name */}
-      <h3 
+      <h3
         {...attributes}
         {...listeners}
         className="text-lg font-medium text-gray-800 cursor-move mb-2"
@@ -58,13 +58,10 @@ export const Section = ({ section }: SectionProp) => {
       <div className="min-h-[120px]">
         <SortableContext items={itemIds}>
           <div className="space-y-3">
-            {section.items.map(itemId => (
-              <Component
-                key={itemId}
-                item={itemMap[itemId]}
-              />
+            {section.items.map((itemId) => (
+              <Component key={itemId} item={itemMap[itemId]} />
             ))}
-            
+
             {section.items.length === 0 && (
               <div className="h-32 border border-dashed border-gray-200 rounded bg-gray-50 flex items-center justify-center">
                 <span className="text-gray-400">Drop items here</span>

@@ -91,7 +91,7 @@ const Editor = () => {
   const [dividerPosition, setDividerPosition] = useState(50);
 
   // Access your editor state & actions
-  const { editorState, newSection } = useEditorAtom();
+  const { editorState, newSection, newSubSection } = useEditorAtom();
 
   // Each section uses an ID "section-xxx" for sorting
 
@@ -115,8 +115,8 @@ const Editor = () => {
   };
 
   /** Add new subsection from the left sidebar. */
-  const addNewSubsection = () => {
-    console.log("addNewSubsection()")
+  const addNewSubsection = (subSection: SubsectionType) => {
+    newSubSection(subSection)
   };
 
   return (
