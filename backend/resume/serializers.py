@@ -17,6 +17,7 @@ class SubSectionCreateSerializer(serializers.Serializer):
     description = serializers.CharField(required=True)
     resume_id = serializers.IntegerField(required=True)
     section_id = serializers.IntegerField(required=True)
+    time_range = serializers.CharField(required=False)
 
 
 class BulletPointCreateSerializer(serializers.Serializer):
@@ -42,4 +43,26 @@ class SubSectionDeleteSerializer(serializers.Serializer):
 
 
 class BulletPointDeleteSerializer(serializers.Serializer):
+    bullet_point_id = serializers.IntegerField(required=True)
+
+
+class ResumePutSerializer(serializers.Serializer):
+    name = serializers.CharField(required=False)
+    resume_id = serializers.IntegerField(required=True)
+
+
+class SectionPutSerializer(serializers.Serializer):
+    title = serializers.CharField(required=False)
+    section_id = serializers.IntegerField(required=True)
+
+
+class SubSectionPutSerializer(serializers.Serializer):
+    title = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
+    time_range = serializers.CharField(required=False)
+    sub_section_id = serializers.IntegerField(required=True)
+
+
+class BulletPointPutSerializer(serializers.Serializer):
+    data = serializers.CharField(required=False)
     bullet_point_id = serializers.IntegerField(required=True)

@@ -17,6 +17,11 @@ class Resume(models.Model):
     
     def __str__(self):
         return f"Resume {self.name} (created: {self.created_at}, updated: {self.updated_at})"
+    
+    def update_details(self, name: str | None):
+        if name:
+            self.name = name
+        self.save()
 
 
 class Section(models.Model):
@@ -29,19 +34,35 @@ class Section(models.Model):
             "id": self.id,
         }
 
+    def update_details(self, title: str | None):
+        if title:
+            self.title = title
+        self.save()
+
 
 class SubSection(models.Model):
     title = models.CharField(max_length=500)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sub_sections')
     section = models.ManyToManyField(Section, related_name='sub_sections')
     description = models.CharField(max_length=1000)
+    time_range = models.CharField(max_length=250, null=True, blank=True)
 
     def details(self) -> dict:
         return {
             "title": self.title,
             "description": self.description,
+            "time_range": self.time_range,
             "id": self.id,
         }
+
+    def update_details(self, title: str | None, description: str | None, time_range: str | None):
+        if title:
+            self.title = title
+        if description:
+            self.description = description
+        if time_range:
+            self.time_range = time_range
+        self.save()
 
 
 class BulletPoint(models.Model):
@@ -62,3 +83,7 @@ class BulletPoint(models.Model):
             "id": self.id,
         }
 
+    def update_details(self, title: str | None):
+        if data:
+            self.data = data
+        self.save()

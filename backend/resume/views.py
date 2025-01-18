@@ -10,9 +10,15 @@ from .serializers import (
     SectionCreateSerializer,
     SubSectionCreateSerializer,
     BulletPointCreateSerializer,
+    ResumeGetSerializer,
+    SectionGetSerializer,
     ResumeDeleteSerializer,
     SubSectionDeleteSerializer,
     BulletPointDeleteSerializer,
+    ResumePutSerializer,
+    SectionPutSerializer,
+    SubSectionPutSerializer,
+    BulletPointPutSerializer,
 )
 from django.conf import settings
 from .models import Resume, Section, SubSection, BulletPoint
@@ -70,10 +76,28 @@ class ResumeViews(APIView):
         try:
             resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'), user=request.user)
             resume.delete()
-            return Response({"Resume deleted successfully!"}, status=HTTP_200_OK)
+            return Response({"message": "Resume deleted successfully"}, status=HTTP_200_OK)
         except Resume.DoesNotExist:
-            return Response({"error": "Resume id not found or you have no permission to delete this resume!"}, status=404)
+            return Response({"error": "Resume id not found or you have no permission to delete this resume"}, status=404)
     
+    @extend_schema(
+        request=ResumePutSerializer,
+        description='Update resume',
+    )
+    def put(self, request: HttpRequest) -> Response:
+        serializer = ResumePutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'), user=request.user)
+            name = serializer.validated_data.get('name')
+            resume.update_details(name=name)
+            return Response({"resume": resume}, status=HTTP_200_OK)
+        except Resume.DoesNotExist:
+            return Response({"error": "Resume id not found or you have no permission to update this resume"}, status=404)
+
 
 class SectionViews(APIView):
     permission_classes = (IsAuthenticated,)
@@ -115,6 +139,24 @@ class SectionViews(APIView):
             return Response({"sections": sections}, status=HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=404)
+    
+    @extend_schema(
+        request=SectionPutSerializer,
+        description='Update section',
+    )
+    def put(self, request: HttpRequest) -> Response:
+        serializer = SectionPutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            section = Section.objects.get(id=serializer.validated_data.get('section_id'), user=request.user)
+            title = serializer.validated_data.get('title')
+            section.update_details(title=title)
+            return Response({"section": section}, status=HTTP_200_OK)
+        except Section.DoesNotExist:
+            return Response({"error": "Section id not found or you have no permission to update this section"}, status=404)
 
 
 class SubSectionViews(APIView):
@@ -143,6 +185,7 @@ class SubSectionViews(APIView):
         sub_section = SubSection.objects.create(
             title=serializer.validated_data.get('title'),
             description=serializer.validated_data.get('description'),
+            time_range=serializer.validated_data.get('time_range'),
             section=section,
             user=request.user,
             resume=resume
@@ -163,9 +206,29 @@ class SubSectionViews(APIView):
         try:
             sub_section = SubSection.objects.get(id=serializer.validated_data.get('sub_section_id'), user=request.user)
             sub_section.delete()
-            return Response({"Subsection deleted successfully"}, status=HTTP_200_OK)
+            return Response({"message": "Subsection deleted successfully"}, status=HTTP_200_OK)
         except SubSection.DoesNotExist:
             return Response({"error": "Sub section not found or you have no permission to delete this subsection"}, status=404)
+    
+    @extend_schema(
+        request=SubSectionPutSerializer,
+        description='Update section',
+    )
+    def put(self, request: HttpRequest) -> Response:
+        serializer = SubSectionPutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            sub_section = SubSection.objects.get(id=serializer.validated_data.get('sub_section_id'), user=request.user)
+            title = serializer.validated_data.get('title')
+            time_range = serializer.validated_data.get('time_range')
+            description = serializer.validated_data.get('description')
+            sub_section.update_details(title=title, time_range=time_range, description=description)
+            return Response({"section": section}, status=HTTP_200_OK)
+        except SubSection.DoesNotExist:
+            return Response({"error": "Sub section id not found or you have no permission to update this sub section"}, status=404)
 
 
 class BulletPointViews(APIView):
@@ -175,7 +238,6 @@ class BulletPointViews(APIView):
         request=BulletPointCreateSerializer,
         description='User create new bullet point',
     )
-
     def post(self, request: HttpRequest) -> Response:
         serializer = BulletPointCreateSerializer(data=request.data)
 
@@ -202,9 +264,8 @@ class BulletPointViews(APIView):
 
     @extend_schema(
         request=BulletPointDeleteSerializer,
-        description='Delete Sub section',
+        description='Delete sub section',
     )
-
     def delete(self, request: HttpRequest) -> Response:
         serializer = BulletPointDeleteSerializer(data=request.query_params)
 
@@ -213,6 +274,24 @@ class BulletPointViews(APIView):
         try:
             bullet_point = BulletPoint.objects.get(id=serializer.validated_data.get('bullet_point_id'), user=request.user)
             bullet_point.delete()
-            return Response({"Bulletpoint deleted successfully"}, status=HTTP_200_OK)
+            return Response({"message": "Bulletpoint deleted successfully"}, status=HTTP_200_OK)
         except BulletPoint.DoesNotExist:
             return Response({"error": "Bullet point not found or you have no permission to delete this bullet point"}, status=404)
+    
+    @extend_schema(
+        request=BulletPointPutSerializer,
+        description='Update bullet point',
+    )
+    def put(self, request: HttpRequest) -> Response:
+        serializer = BulletPointPutSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            bullet_point = BulletPoint.objects.get(id=serializer.validated_data.get('bullet_point_id'), user=request.user)
+            data = serializer.validated_data.get('data')
+            bullet_point.update_details(data=data)
+            return Response({"bullet_point": bullet_point}, status=HTTP_200_OK)
+        except BulletPoint.DoesNotExist:
+            return Response({"error": "Bullet point not found or you have no permission to update this bullet point"}, status=404)
