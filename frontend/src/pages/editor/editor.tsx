@@ -3,7 +3,7 @@ import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
 import { DndContext, DragCancelEvent, DragEndEvent, DragMoveEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import { createPortal } from "react-dom";
 import { Section } from "./section";
 import { ItemView } from "./ItemView";
@@ -13,7 +13,7 @@ const Editor = () => {
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(50);
   // Access your editor state & actions
-  const { editorState, move, newSection, moveSection } = useEditorAtom();
+  const { editorState, move, newSection, moveSection, filterItem, addItemToSection, moveMenuItem } = useEditorAtom();
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -33,7 +33,6 @@ const Editor = () => {
   const [activeId, setActive] = useAtom(activeAtom)
 
   const onDragStart = (e: DragStartEvent) => {
-    console.log(e)
     setActive({
       type: e.active.data.current!.type,
       id: e.active.id
@@ -45,30 +44,68 @@ const Editor = () => {
   }
 
   const onDragEnd = (e: DragEndEvent) => {
-    console.log("OnDragEnd called")
+    console.log("OnDragEnd called", e.active, e.over)
     setActive(() => null)
+
     if (e.active.data.current?.type === "SECTION") {
-      if (!e.over || !e.over.data.current) {
+      // 1, Section dragging
+      if (!e.over || !e.over.data.current || e.over.data.current.type !== "SECTION") {
         return;
       }
       let targetIndex = e.over.data.current!.sortable.index
       moveSection(e.active.id as string, targetIndex)
+
     } else if (e.active.data.current?.type === "ITEM") {
+      // 2, Item Dragging
       if (!e.over || !e.over.data.current) {
         return;
       }
       if (e.over.data.current.type === "SECTION") {
+        // 2.1 Over Section
         move(e.active.id as string, e.over.id as string, 0)
+
       } else if (e.over.data.current.type === "ITEM") {
+        // 2.2 Over Item
         move(
           e.active.id as string,
           e.over.data.current.parentContainerId,
+          e.over.data.current.sortable.index
+        )
+
+      } else if (e.over.data.current.type === "MENU_ITEM") {
+        // 2.3 Over Menu-Item
+        filterItem(e.active.id as string)
+      } else {
+        console.log("WARNING: OVER ITEM DON'T HAVE TYPE")
+      }
+      console.log(e.over)
+    } else if (e.active.data.current?.type === "MENU_ITEM") {
+      // 3, Menu Item Dragging
+      if (!e.over || !e.over.data.current) {
+        return;
+      }
+      const activeId = (e.active.id as string).substring(5)
+      if (e.over.data.current.type === "SECTION") {
+        // 3.1 Over Section
+        addItemToSection(activeId, e.over.id as string)
+      } else if (e.over.data.current.type === "ITEM") {
+        // 3.2 Over Item
+        addItemToSection(
+          activeId,
+          e.over.data.current.parentContainerId,
+          e.over.data.current.sortable.index
+        )
+
+      } else if (e.over.data.current.type === "MENU_ITEM") {
+        moveMenuItem(
+          activeId,
           e.over.data.current.sortable.index
         )
       } else {
         console.log("WARNING: OVER ITEM DON'T HAVE TYPE")
       }
       console.log(e.over)
+
     } else {
       console.log("WARNING: ACTIVE ITEM DON'T HAVE TYPE")
     }
