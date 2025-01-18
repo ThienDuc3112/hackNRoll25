@@ -1,9 +1,9 @@
 import { useAtomValue } from "jotai";
-import { itemMapAtom } from "./state";
+import { activeAtom, itemMapAtom } from "./state";
 import { SectionType } from "./types";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
 
 type SectionProp = {
@@ -13,7 +13,7 @@ type SectionProp = {
 export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
 
-  const { setNodeRef, attributes, listeners, transform, transition } = useSortable({
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: section.id,
     data: {
       type: "SECTION"
@@ -22,6 +22,17 @@ export const Section = ({ section }: SectionProp) => {
   const style = {
     transition: transition,
     transform: CSS.Transform.toString(transform)
+  }
+
+  if (isDragging) {
+    return <div
+      className={`w-full mb-6 bg-gray-200`}
+      ref={setNodeRef}
+      style={style}
+    >
+      <div className="min-h-[120px]" />
+    </div>
+
   }
 
   return (
@@ -50,14 +61,16 @@ export const Section = ({ section }: SectionProp) => {
               <span className="text-gray-400">Drop items here</span>
             </div>
           )}
-          {section.items.map((itemId) => {
-            const item = itemMap[itemId];
-            if (item.type == "SUBSECTION") {
-              return <Subsection key={item.id} allowEdit={false} subSection={item} />;
-            } else {
-              return <BulletPoint key={item.id} point={item} />;
-            }
-          })}
+          <SortableContext items={section.items} strategy={verticalListSortingStrategy}>
+            {section.items.map((itemId) => {
+              const item = itemMap[itemId];
+              if (item.type == "SUBSECTION") {
+                return <Subsection key={item.id} allowEdit={false} subSection={item} />;
+              } else {
+                return <BulletPoint key={item.id} point={item} />;
+              }
+            })}
+          </SortableContext>
         </div>
       </div>
     </div>
