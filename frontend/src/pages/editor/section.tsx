@@ -3,6 +3,8 @@ import { itemMapAtom } from "./state";
 import { SectionType } from "./types";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities"
 
 type SectionProp = {
   section: SectionType;
@@ -11,13 +13,28 @@ type SectionProp = {
 export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
 
+  const { setNodeRef, attributes, listeners, transform, transition } = useSortable({
+    id: section.id,
+    data: {
+      type: "SECTION"
+    }
+  })
+  const style = {
+    transition: transition,
+    transform: CSS.Transform.toString(transform)
+  }
+
   return (
     <div
       className={`w-full mb-6`}
+      ref={setNodeRef}
+      style={style}
     >
       {/* Section Name */}
       <h3
         className="text-lg font-medium text-gray-800 cursor-move mb-2"
+        {...attributes}
+        {...listeners}
       >
         {section.displayName}
       </h3>
