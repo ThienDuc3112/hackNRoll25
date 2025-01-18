@@ -1,4 +1,4 @@
-import React, { Dispatch, useState } from "react";
+import React, { useState } from "react";
 import { X, Download, Plus } from "lucide-react";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 
@@ -7,10 +7,7 @@ import Mydocument from "./mydocument";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
-import { IdItemType, ItemType, SectionType, UserMetaDataItem } from "./types";
-import { SetStateAction } from "jotai";
-
-type StateSetter<T> = Dispatch<SetStateAction<T>>
+import { IdItemType, ItemType, SectionType, SubsectionType, UserMetaDataItem } from "./types";
 
 /** Contact info & PDF export components (unchanged) */
 const ContactInfo = ({ value, onChange, onRemove }) => {
@@ -101,10 +98,6 @@ const Editor = () => {
   // Track item/section being dragged
   //const [activeId, setActiveId] = useState<UniqueIdentifier | null>("");
 
-  // For adding new subsections from the menu
-  const [showNameInput, setShowNameInput] = useState(false);
-  const [newSubsectionName, setNewSubsectionName] = useState("");
-
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -134,13 +127,8 @@ const Editor = () => {
       <LeftBar
         dividerPosition={dividerPosition}
         addNewSubsection={addNewSubsection}
-        newSection={newSection}
-        setNewSubsectionName={setNewSubsectionName}
-        newSubsectionName={newSubsectionName}
         itemMap={editorState.itemMap}
         menu={editorState.menu}
-        showNameInput={showNameInput}
-        setShowNameInput={setShowNameInput}
       />
 
       {/** ==================== DRAGGABLE DIVIDER ==================== */}
@@ -285,25 +273,21 @@ type LeftBarProps = {
   dividerPosition: number
   menu: IdItemType[]
   itemMap: Record<string, ItemType>
-  showNameInput: boolean
-  setShowNameInput: StateSetter<boolean>
-  newSubsectionName: string
-  setNewSubsectionName: StateSetter<string>
-  newSection: (id: string, name: string) => void
-  addNewSubsection: () => void
+  addNewSubsection: (subSection: SubsectionType) => void
 }
 
 const LeftBar = ({
   dividerPosition,
   menu,
   itemMap,
-  showNameInput,
-  setShowNameInput,
-  newSubsectionName,
-  setNewSubsectionName,
-  newSection,
   addNewSubsection
 }: LeftBarProps) => {
+  // For adding new subsections from the menu
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [newSubsectionName, setNewSubsectionName] = useState("");
+  const [newSubsectionSubTitle, setNewSubsectionSubTitle] = useState("");
+  const [timerange, setTimerange] = useState("");
+
   return <div
     className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
     style={{ width: `${dividerPosition}%` }}
@@ -329,36 +313,59 @@ const LeftBar = ({
     {/** "Add Subsection" UI */}
     {showNameInput ? (
       <div className="w-full p-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg">
-        <input
-          type="text"
-          value={newSubsectionName}
-          onChange={(e) => setNewSubsectionName(e.target.value)}
-          className="w-full p-2 mb-2 border rounded"
-          placeholder="New section name"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && newSubsectionName.trim()) {
-              newSection(newSubsectionName, newSubsectionName);
-              setNewSubsectionName("");
-            }
-          }}
-        />
-        <div className="flex space-x-2">
-          <button
-            onClick={addNewSubsection}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Add
-          </button>
-          <button
-            onClick={() => {
-              setShowNameInput(false);
-              setNewSubsectionName("");
-            }}
-            className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Cancel
-          </button>
-        </div>
+        <form onSubmit={(e) => {
+          e.preventDefault()
+          addNewSubsection({
+            id: (Math.random() * 100_000).toString(),
+            type: "SUBSECTION",
+            description: newSubsectionSubTitle,
+            items: [],
+            timeRange: timerange,
+            title: newSubsectionSubTitle
+          })
+          setTimerange("")
+          setNewSubsectionName("")
+          setNewSubsectionSubTitle("")
+        }}>
+          <input
+            type="text"
+            value={newSubsectionName}
+            onChange={(e) => setNewSubsectionName(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            placeholder="New section name"
+          />
+          <input
+            type="text"
+            value={newSubsectionSubTitle}
+            onChange={(e) => setNewSubsectionSubTitle(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            placeholder="New section subtitle"
+          />
+          <input
+            type="text"
+            value={timerange}
+            onChange={(e) => setTimerange(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            placeholder="New section timerange"
+          />
+          <div className="flex space-x-2">
+            <button
+              type="submit"
+              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Add
+            </button>
+            <button
+              onClick={() => {
+                setShowNameInput(false);
+                setNewSubsectionName("");
+              }}
+              className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     ) : (
       <button
