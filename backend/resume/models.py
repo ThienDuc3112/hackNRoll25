@@ -12,6 +12,7 @@ class Resume(models.Model):
             "name": self.name,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "id": self.id,
         }
     
     def __str__(self):
@@ -25,6 +26,7 @@ class Section(models.Model):
     def details(self) -> dict:
         return {
             "name": self.title,
+            "id": self.id,
         }
 
 
@@ -38,6 +40,7 @@ class SubSection(models.Model):
         return {
             "title": self.title,
             "description": self.description,
+            "id": self.id,
         }
 
 
@@ -56,5 +59,6 @@ class BulletPoint(models.Model):
     def details(self) -> dict:
         return {
             "data": self.data,
+            "id": self.id,
         }
 
