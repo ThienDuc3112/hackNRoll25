@@ -12,10 +12,10 @@ type SectionProp = {
 
 export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
-  const itemIds = useMemo(() => section.items, [section])
+  const itemIds = useMemo(() => section.items.map(val => `item-${val}`), [section])
 
-  const { setNodeRef, attributes, listeners, transition, transform } = useSortable({
-    id: section.id,
+  const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
+    id: `section-${section.id}`,
     data: {
       type: "section",
     },
@@ -23,45 +23,52 @@ export const Section = ({ section }: SectionProp) => {
 
   const style = {
     transition: transition,
-    transform: CSS.Transform.toString(transform)
+    transform: CSS.Transform.toString(transform),
+    minWidth: 50,
+    padding: 8,
+    width: "100%",
   }
-  console.log(transform)
 
+  //if (isDragging) {
+  //  return <div ref={setNodeRef} style={style}>
+  //    <div
+  //      style={{
+  //        border: "dashed 1px",
+  //        display: "flex",
+  //        flexDirection: "column",
+  //        minHeight: "200px",
+  //        backgroundColor: "black"
+  //      }}
+  //    />
+  //  </div>
+  //}
 
   return (
     <div ref={setNodeRef} style={style} >
       <div
         style={{
-          minWidth: 50,
-          padding: 8,
-          width: "100%",
+          border: "dashed 1px",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "200px",
         }}
       >
+        <span {...attributes} {...listeners} style={{ color: "black", textAlign: "center", flexGrow: 0 }}>
+          {section.displayName}
+        </span>
         <div
-          style={{
-            border: "dashed 1px",
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "200px",
-          }}
+          style={{ width: "100%", height: "100%", flexGrow: 1, margin: 0 }}
         >
-          <span {...attributes} {...listeners} style={{ color: "black", textAlign: "center", flexGrow: 0 }}>
-            {section.displayName}
-          </span>
-          <div
-            style={{ width: "100%", height: "100%", flexGrow: 1, margin: 0 }}
-          >
-            <SortableContext items={itemIds} id={section.id}>
-              {
-                section.items.map((item, i) => (
-                  <Component
-                    item={itemMap[item]}
-                    key={i}
-                  />
-                ))
-              }
-            </SortableContext>
-          </div>
+          <SortableContext items={itemIds} id={section.id}>
+            {
+              section.items.map((item, i) => (
+                <Component
+                  item={itemMap[item]}
+                  key={i}
+                />
+              ))
+            }
+          </SortableContext>
         </div>
       </div>
     </div>

@@ -1,24 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 
 const Field = ({
   id,
   label,
   content,
-  onRemove,
-  onUpdateLabel,
-  onUpdateContent,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(label);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const handleSubmit = () => {
-    onUpdateLabel(newLabel);
-    setIsEditing(false);
-  };
 
   return (
     <div className="mb-4">
@@ -30,12 +20,8 @@ const Field = ({
               onChange={(e) => setNewLabel(e.target.value)}
               className="text-sm p-1 border rounded"
               autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSubmit();
-                if (e.key === "Escape") setIsEditing(false);
-              }}
             />
-            <button onClick={handleSubmit} className="text-sm text-blue-500">
+            <button className="text-sm text-blue-500">
               Save
             </button>
           </div>
@@ -59,7 +45,6 @@ const Field = ({
       </div>
       <textarea
         value={content}
-        onChange={(e) => onUpdateContent(e.target.value)}
         className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         rows={2}
       />
@@ -81,7 +66,6 @@ const Field = ({
               <button
                 className="px-3 py-1 bg-red-500 text-white hover:bg-red-600 rounded"
                 onClick={() => {
-                  onRemove();
                   setShowConfirm(false);
                 }}
               >
@@ -100,75 +84,21 @@ const Subsection = ({
   name,
   isDropped = false,
   onRemove,
-  fields: initialFields,
-  onFieldsUpdate,
+  fields,
+}: {
+  id: string,
+  name: string,
+  isDropped: boolean,
+  onRemove: () => (str: string) => void,
+  fields: { id: number, label: string, content: string }[],
+  onFieldsUpdate: any
 }) => {
-  const [fields, setFields] = useState(
-    initialFields || [{ id: 1, label: "Field 1", content: "" }]
-  );
-  const [fieldCounter, setFieldCounter] = useState(2);
   const [showConfirm, setShowConfirm] = useState(false);
-
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: id,
-    data: {
-      type: 'subsection',
-      name,
-      fields,
-    },
-    disabled: isDropped,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    touchAction: 'none',
-  };
-
-  const addField = () => {
-    const newFields = [
-      ...fields,
-      { id: fieldCounter, label: `Field ${fieldCounter}`, content: "" },
-    ];
-    updateFields(newFields);
-    setFieldCounter(fieldCounter + 1);
-  };
-
-  const updateFields = (newFields) => {
-    setFields(newFields);
-    if (onFieldsUpdate) {
-      onFieldsUpdate(newFields);
-    }
-  };
-
-  const updateFieldContent = (fieldId, content) => {
-    updateFields(
-      fields.map((field) =>
-        field.id === fieldId ? { ...field, content } : field
-      )
-    );
-  };
-
-  const removeField = (fieldId) => {
-    updateFields(fields.filter((field) => field.id !== fieldId));
-  };
-
-  const updateFieldLabel = (fieldId, newLabel) => {
-    updateFields(
-      fields.map((field) =>
-        field.id === fieldId ? { ...field, label: newLabel } : field
-      )
-    );
-  };
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`w-full p-4 mb-4 rounded-lg ${
-        !isDropped ? "bg-white shadow-md cursor-move" : "bg-white shadow-md"
-      } ${isDragging ? "opacity-50" : "opacity-100"}`}
+      className={`w-full p-4 mb-4 rounded-lg ${!isDropped ? "bg-white shadow-md cursor-move" : "bg-white shadow-md"
+        }`}
     >
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-semibold text-lg">{name}</h3>
@@ -187,15 +117,11 @@ const Subsection = ({
             id={field.id}
             label={field.label}
             content={field.content}
-            onRemove={() => removeField(field.id)}
-            onUpdateLabel={(newLabel) => updateFieldLabel(field.id, newLabel)}
-            onUpdateContent={(content) => updateFieldContent(field.id, content)}
           />
         ))}
       </div>
 
       <button
-        onClick={addField}
         className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600"
       >
         <Plus size={16} className="mr-1" /> Add Field

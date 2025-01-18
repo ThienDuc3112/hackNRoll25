@@ -1,16 +1,16 @@
 import { atom, useAtom } from "jotai"
 import { EditorStateType, IdItemType, ItemType, SectionType } from "./types"
+import { arrayMove } from "@dnd-kit/sortable"
 
 export const editorAtom = atom<EditorStateType>({
   menu: ["test", "skill", "education"],
-  sections: {
-    "default": {
+  sections: [
+    {
       id: "default",
       displayName: "Default Section",
       items: ["test2"]
     },
-
-  },
+  ],
   itemMap: {
     test: {
       type: "POINT",
@@ -37,15 +37,6 @@ export const editorAtom = atom<EditorStateType>({
 
 export const itemMapAtom = atom<Record<string, ItemType>>((get) => get(editorAtom).itemMap)
 
-const filterSection = (sections: Record<string, SectionType>, itemId: IdItemType): Record<string, SectionType> => {
-  const newSections = { ...sections }
-  for (const sectionKey in newSections) {
-    newSections[sectionKey] = { ...newSections[sectionKey] }
-    newSections[sectionKey].items = newSections[sectionKey].items.filter(val => val !== itemId)
-  }
-  return newSections
-}
-
 export const useEditorAtom = () => {
   const [editorState, setEditorState] = useAtom(editorAtom)
 
@@ -53,47 +44,49 @@ export const useEditorAtom = () => {
     console.log(`move ${itemId} to ${sectionId}[${targetIndex}]`)
     setEditorState(prev => {
       if (!prev.itemMap[itemId]) return prev;
-      console.log("prev", prev)
+      //console.log("prev", prev)
 
       const newState = {
         itemMap: prev.itemMap,
-        sections: filterSection(prev.sections, itemId),
+        sections: [...prev.sections],
         menu: prev.menu.filter(val => val !== itemId)
       }
 
-      if (sectionId === "") {
-        console.log("move to menu")
-        const updatedMenu = [...newState.menu]
-        updatedMenu.splice(targetIndex, 0, itemId)
-        newState.menu = updatedMenu
-      } else if (newState.sections[sectionId] === undefined) {
-        console.log("unhandled", newState.sections, sectionId)
-        // Handled later
-        return prev
-      } else {
-        console.log("move to section")
-        const updatedItems = [...newState.sections[sectionId].items]
-        updatedItems.splice(targetIndex, 0, itemId)
-        newState.sections[sectionId].items = updatedItems
-      }
+      newState.sections = newState.sections.map(section => {
+        const newSection = { ...section }
+        newSection.items = newSection.items.filter(val => val !== itemId)
+        if (newSection.id === sectionId) {
+          newSection.items.splice(targetIndex, 0, itemId)
+        }
+        return newSection
+      })
 
       return newState
     })
   }
 
+  const moveSection = (activeSectionId: string, targetIndex: number) => {
+    const { sections } = editorState
+    const newSections = arrayMove(sections, sections.findIndex(val => val.id === activeSectionId), targetIndex)
+    setEditorState(prev => ({
+      ...prev,
+      sections: newSections
+    }))
+  }
+
   const newSection = (id: string, name: string) => {
     setEditorState(prev => ({
-      ...prev, sections: {
+      ...prev, sections: [
         ...prev.sections,
-        [name]: {
+        {
           id: id,
           displayName: name,
           items: []
         }
-      }
+      ]
     }))
   }
 
-  return { editorState, move, newSection }
+  return { editorState, move, moveSection, newSection }
 }
 

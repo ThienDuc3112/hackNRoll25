@@ -1,4 +1,9 @@
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  UniqueIdentifier,
+} from "@dnd-kit/core";
 import { useMemo, useState } from "react";
 import Button from "./button";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
@@ -64,6 +69,7 @@ const ExportHandler = ({ name, metadatas }) => {
               document={<Mydocument name={name} metadatas={metadatas} />}
               fileName="resume.pdf"
             >
+              {/** @ts-expect-error PDF is dumb */}
               {({ loading }) => (
                 <Button variant="primary" disabled={loading}>
                   <Download size={16} />
@@ -96,7 +102,9 @@ const Editor = () => {
   const [dividerPosition, setDividerPosition] = useState(50);
   const [newSectionName, setNewSectionName] = useState<string>("");
   const { editorState, move, newSection } = useEditorAtom();
-  const sectionIds = useMemo(() => Object.keys(editorState.sections), [editorState])
+  const sectionIds = useMemo(() => editorState.sections.map(val => `section-${val.id}`), [editorState])
+
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   const [subsections, setSubsections] = useState([
     "Subsection 1",
@@ -109,6 +117,7 @@ const Editor = () => {
   const [showNameInput, setShowNameInput] = useState(false);
   const [name, setName] = useState("");
   const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>("");
 
   const parts = useMemo(() => ["right", "vertical", "left"], [])
 
@@ -144,23 +153,34 @@ const Editor = () => {
   };
 
   const onDragEnd = (e: DragEndEvent) => {
+    setActiveId(null)
     const { over, active } = e;
     if (!over || !active.data.current) return;
+    console.log(e)
 
-    if (active.data.current.type === "subsection") {
-      handleDrop(active.data.current.name, active.data.current.fields);
-      return;
-    }
+    //if (active.data.current.type === "subsection") {
+    //  handleDrop(active.data.current.name, active.data.current.fields);
+    //  return;
+    //}
 
     const overId = over.id as string;
     const activeId = active.id as string;
     const overData = over.data.current;
+    const activeData = active.data.current;
+
 
     if (!overData) {
       move(activeId, overId, 0);
+    } else if (activeData.type === "item" && overData.type === "section") {
+      const activeComponentId = activeId.substring(5)
+      const overSectionId = overId.substring(8)
+      move(activeComponentId, overSectionId, activeData.sortable.index)
     } else {
-      const index = overData.items ? overData.items.length : 0;
-      move(activeId, overId, index);
+      console.log("Haven't handled")
+      console.log("active type:", activeData.type, "\nover type:", overData.type)
+
+      //const index = overData.items ? overData.items.length : 0;
+      //move(activeId, overId, index);
     }
   };
 
@@ -214,8 +234,10 @@ const Editor = () => {
   return (
     <div className="fixed inset-0 flex w-full overflow-hidden">
       <DndContext
-        onDragStart={() => {
-          console.log("Drag started", editorState);
+        onDragStart={(e) => {
+          if (e.active.data.current?.type === "component") {
+            setActiveId(e.active.id)
+          }
         }}
         onDragEnd={onDragEnd}
       >
@@ -367,10 +389,42 @@ const Editor = () => {
                 </div>
               </div>
             </div>
-            {Object.keys(editorState.sections).map((sectionKey, i) => {
-              const section = editorState.sections[sectionKey];
-              return <Section key={i} section={section}></Section>;
-            })}
+            <SortableContext strategy={verticalListSortingStrategy} items={sectionIds}>
+              {editorState.sections.map((section, i) => {
+                return (
+                  <Section
+                    key={i}
+                    section={section}
+                  />
+                );
+              })}
+            </SortableContext>
+            {
+              //<DragOverlay>
+              //  {activeSection && <Section section={editorState.sections[activeSection]} />}
+              //</DragOverlay>
+            }
+
+            {/* <span style={{ backgroundColor: "aqua" }}> */}
+            <input
+              type="text"
+              value={newSectionName}
+              onChange={(e) => {
+                setNewSectionName(e.target.value);
+              }}
+              className="w-full p-2 mb-2 border rounded"
+              placeholder="Section name"
+            />
+            <Button
+              onClick={() => {
+                if (newSectionName == "") return;
+                newSection(newSectionName, newSectionName);
+                setNewSectionName("");
+              }}
+            >
+              Add section
+            </Button>
+            {/* </span> */}
           </div>
         </SortableContext>
       </DndContext>

@@ -25,7 +25,7 @@ export type SectionType = {
 
 export type EditorStateType = {
   menu: IdItemType[]
-  sections: Record<string, SectionType>,
+  sections: SectionType[],
   itemMap: Record<string, ItemType>
 }
 
