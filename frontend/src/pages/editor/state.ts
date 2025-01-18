@@ -8,7 +8,7 @@ export const editorAtom = atom<EditorStateType>({
     {
       id: "default",
       displayName: "Default Section",
-      items: ["skill"],
+      items: ["test", "skill", "test2"],
     },
   ],
   itemMap: {
@@ -119,13 +119,14 @@ export const useEditorAtom = () => {
           ...prev.itemMap,
           [newId]: newPoint,
         },
+        menu: [...prev.menu, newId],
       };
       return newState;
     });
     return newId;
   };
 
-  const newSubSection = (subsection: SubsectionType) =>{
+  const newSubSection = (subsection: SubsectionType) => {
     const newId = Math.random().toString();
     setEditorState((prev) => {
       const newState: EditorStateType = {
@@ -134,15 +135,43 @@ export const useEditorAtom = () => {
           ...prev.itemMap,
           [newId]: {
             ...subsection,
-            id: newId
+            id: newId,
           },
         },
-        menu: [...prev.menu, newId]
+        menu: [...prev.menu, newId],
       };
-      
-      return newState
-    })
-  }
 
-  return { editorState, move, moveSection, newBulletPoint, newSubSection, newSection };
+      return newState;
+    });
+  };
+
+  const addPointToSubSection = (pointId: string, subSectionId: string) => {
+    setEditorState((prev) => {
+      const subSection = prev.itemMap[subSectionId];
+      const point = prev.itemMap[pointId];
+      if (
+        subSection == undefined ||
+        point == undefined ||
+        subSection.type != "SUBSECTION" ||
+        point.type != "POINT"
+      ) {
+        return prev;
+      }
+      const newState = { ...prev };
+      const newSubSection = { ...subSection };
+      newSubSection.items = [...newSubSection.items, point.id];
+      newState.itemMap[newSubSection.id] = newSubSection;
+      return newState;
+    });
+  };
+
+  return {
+    editorState,
+    move,
+    moveSection,
+    newBulletPoint,
+    newSubSection,
+    addPointToSubSection,
+    newSection,
+  };
 };

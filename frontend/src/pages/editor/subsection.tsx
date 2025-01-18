@@ -5,11 +5,18 @@ import { useAtomValue } from "jotai";
 import { itemMapAtom, useEditorAtom } from "./state";
 import BulletPoint from "./bulletpoint";
 
-const Subsection = ({ subSection }: { subSection: SubsectionType }) => {
+const Subsection = ({
+  subSection,
+  allowEdit = true,
+}: {
+  subSection: SubsectionType;
+  allowEdit?: boolean;
+}) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const itemMap = useAtomValue(itemMapAtom);
-
-  const {newBulletPoint} = useEditorAtom()
+  const [showBulletInput, setBulletInput] = useState(false);
+  const { newBulletPoint, addPointToSubSection } = useEditorAtom();
+  const [newBulletPointName, setNewBulletPointName] = useState("");
 
   return (
     <div
@@ -17,12 +24,15 @@ const Subsection = ({ subSection }: { subSection: SubsectionType }) => {
     >
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-semibold text-lg">{subSection.title}</h3>
-        <button
-          onClick={() => setShowConfirm(true)}
-          className="p-1 hover:bg-gray-100 rounded"
-        >
-          <X size={16} />
-        </button>
+
+        {allowEdit && (
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="p-1 hover:bg-gray-100 rounded"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       <div>
@@ -31,11 +41,35 @@ const Subsection = ({ subSection }: { subSection: SubsectionType }) => {
         ))}
       </div>
 
-      <button onClick={() => {
-        
-      }} className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600">
-        <Plus size={16} className="mr-1" /> Add Bullet Point
-      </button>
+      {showBulletInput ? (
+        <div>
+          <input
+            type="text"
+            value={newBulletPointName}
+            onChange={(e) => setNewBulletPointName(e.target.value)}
+            className="w-full p-2 mb-2 border rounded"
+            placeholder="New bullet point"
+          />
+          <button
+            onClick={() => {
+              const pointId = newBulletPoint(newBulletPointName);
+              addPointToSubSection(pointId, subSection.id);
+              setNewBulletPointName("");
+            }}
+          >
+            Add
+          </button>
+        </div>
+      ) : (
+        allowEdit && (
+          <button
+            onClick={() => setBulletInput(true)}
+            className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600"
+          >
+            <Plus size={16} className="mr-1" /> Add Bullet Point
+          </button>
+        )
+      )}
 
       {showConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
