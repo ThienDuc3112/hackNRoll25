@@ -4,6 +4,7 @@ import { Component } from "./component";
 import { useAtomValue } from "jotai";
 import { itemMapAtom } from "./state";
 import { useMemo } from "react";
+import { CSS } from "@dnd-kit/utilities"
 
 type SectionProp = {
   section: SectionType;
@@ -13,16 +14,22 @@ export const Section = ({ section }: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
   const itemIds = useMemo(() => section.items, [section])
 
-  const { setNodeRef, attributes, listeners } = useSortable({
+  const { setNodeRef, attributes, listeners, transition, transform } = useSortable({
     id: section.id,
     data: {
       type: "section",
     },
-    disabled: true
   })
 
+  const style = {
+    transition: transition,
+    transform: CSS.Transform.toString(transform)
+  }
+  console.log(transform)
+
+
   return (
-    <div ref={setNodeRef} {...attributes} {...listeners} >
+    <div ref={setNodeRef} style={style} >
       <div
         style={{
           minWidth: 50,
@@ -38,25 +45,21 @@ export const Section = ({ section }: SectionProp) => {
             minHeight: "200px",
           }}
         >
-          <span style={{ color: "black", textAlign: "center", flexGrow: 0 }}>
+          <span {...attributes} {...listeners} style={{ color: "black", textAlign: "center", flexGrow: 0 }}>
             {section.displayName}
           </span>
           <div
             style={{ width: "100%", height: "100%", flexGrow: 1, margin: 0 }}
           >
             <SortableContext items={itemIds} id={section.id}>
-              {section.items.map((item, i) => (
-                <Component
-                  item={itemMap[item]}
-                  key={i}
-                  data={{
-                    sortable: {
-                      containerId: section.id,
-                      index: i,
-                    },
-                  }}
-                />
-              ))}
+              {
+                section.items.map((item, i) => (
+                  <Component
+                    item={itemMap[item]}
+                    key={i}
+                  />
+                ))
+              }
             </SortableContext>
           </div>
         </div>

@@ -7,15 +7,14 @@ import Button from "./button";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import Mydocument from "./mydocument";
 import { X, Download } from "lucide-react";
-import { Textarea } from "./textarea";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 ////////////////////////////////////////////////////////////////////////
 
-const ExportHandler = ({ name }) => {
+const ExportHandler = ({ name, subsection }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   if (showPreview) {
@@ -66,6 +65,8 @@ const Editor = () => {
   const [dividerPosition, setDividerPosition] = useState(50);
   const [newSectionName, setNewSectionName] = useState<string>("");
   const { editorState, move, newSection } = useEditorAtom();
+  const sectionIds = useMemo(() => Object.keys(editorState.sections), [editorState])
+
   const [subsections, setSubsections] = useState([
     "Subsection 1",
     "Subsection 2",
@@ -77,7 +78,7 @@ const Editor = () => {
   const [showNameInput, setShowNameInput] = useState(false);
   const [name, setName] = useState("");
 
-  const parts = useMemo(() => ["menu", "sections"], [])
+  const parts = useMemo(() => ["right", "vertical", "left"], [])
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -138,11 +139,11 @@ const Editor = () => {
     }
   };
 
-  const removeSubsection = (name) => {
+  const removeSubsection = (name: string) => {
     setSubsections(subsections.filter((subsec) => subsec !== name));
   };
 
-  const removeDroppedSubsection = (subsectionId) => {
+  const removeDroppedSubsection = (subsectionId: any) => {
     setDroppedSubsections(
       droppedSubsections.filter((subsec) => subsec.id !== subsectionId)
     );
@@ -156,7 +157,7 @@ const Editor = () => {
     }
   };
 
-  const updateDroppedSubsectionFields = (subsectionId, newFields) => {
+  const updateDroppedSubsectionFields = (subsectionId: string, newFields) => {
     setDroppedSubsections(
       droppedSubsections.map((subsec) =>
         subsec.id === subsectionId ? { ...subsec, fields: newFields } : subsec
@@ -172,7 +173,7 @@ const Editor = () => {
         }}
         onDragEnd={onDragEnd}
       >
-        <SortableContext items={["menu", "editor"]}>
+        <SortableContext items={parts}>
           {/* Sidebar */}
           {/* Left */}
           <div
@@ -241,12 +242,6 @@ const Editor = () => {
             {/* Control Bar */}
             <div className="flex items-center gap-4 p-2 bg-white border-b">
               <ExportHandler name={name} subsections={droppedSubsections} />
-              {/* <Button onClick={() => console.log("Button 2")} variant="secondary">
-              Button 2
-            </Button>
-            <Button onClick={() => console.log("Button 3")} variant="outline">
-              Button 3
-            </Button> */}
             </div>
 
             {/* Main Content */}
@@ -272,15 +267,19 @@ const Editor = () => {
                 </div>
               </div>
             </div>
-            {Object.keys(editorState.sections).map((sectionKey, i) => {
-              const section = editorState.sections[sectionKey];
-              return (
-                <Section
-                  key={i}
-                  section={section}
-                ></Section>
-              );
-            })}
+            <DndContext>
+              <SortableContext strategy={verticalListSortingStrategy} items={sectionIds}>
+                {Object.keys(editorState.sections).map((sectionKey, i) => {
+                  const section = editorState.sections[sectionKey];
+                  return (
+                    <Section
+                      key={i}
+                      section={section}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
             {/* <span style={{ backgroundColor: "aqua" }}> */}
             <input
               type="text"

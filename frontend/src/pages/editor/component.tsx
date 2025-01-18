@@ -1,15 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ItemType } from "./types";
+import { useEffect } from "react";
 
 type ComponentProp = {
   item: ItemType,
-  data: {
-    sortable: {
-      containerId: string,
-      index: number
-    }
-  }
 };
 
 export const Component = (props: ComponentProp) => {
@@ -17,9 +12,14 @@ export const Component = (props: ComponentProp) => {
     {
       id: props.item.id,
       disabled: false,
-      data: props.data
+      data: {
+        type: "container"
+      }
     }
   );
+  useEffect(() => {
+    console.log(transform)
+  }, [transform])
   return (
     <div
       ref={setNodeRef}
