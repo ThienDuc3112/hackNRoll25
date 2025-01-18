@@ -1,21 +1,44 @@
-import {
-  DndContext,
-  DragEndEvent,
-} from "@dnd-kit/core";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { useMemo, useState } from "react";
 import Button from "./button";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import Mydocument from "./mydocument";
-import { X, Download } from "lucide-react";
+import { X, Download, Plus } from "lucide-react";
 import { Textarea } from "./textarea";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
 import BulletPoint from "./bulletpoint";
 import { SortableContext } from "@dnd-kit/sortable";
+import React from "react";
 
 ////////////////////////////////////////////////////////////////////////
-const ExportHandler = ({ name }) => {
+const ContactInfo = ({ value, onChange, onRemove }) => {
+  const [placeholder, setPlaceholder] = useState("Enter contact info");
+
+  return (
+    <div className="relative group">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onClick={() => setPlaceholder("Enter contact info")}
+        onBlur={() => !value && setPlaceholder("Click to edit")}
+        placeholder={placeholder}
+        className="text-sm text-center border-b border-gray-200 focus:outline-none focus:border-gray-400"
+      />
+      {value && (
+        <button
+          onClick={onRemove}
+          className="absolute -right-6 top-1/2 -translate-y-1/2 hidden group-hover:block p-1 hover:bg-gray-100 rounded"
+        >
+          <X size={14} />
+        </button>
+      )}
+    </div>
+  );
+};
+const ExportHandler = ({ name, metadatas }) => {
   const [showPreview, setShowPreview] = useState(false);
 
   if (showPreview) {
@@ -33,20 +56,20 @@ const ExportHandler = ({ name }) => {
           </div>
           <div className="flex-1">
             <PDFViewer width="100%" height="100%">
-              <Mydocument name={name} />
+              <Mydocument name={name} metadatas={metadatas} />
             </PDFViewer>
           </div>
           <div className="mt-4 flex justify-end">
             <PDFDownloadLink
-              document={<Mydocument name={name} />}
+              document={<Mydocument name={name} metadatas={metadatas} />}
               fileName="resume.pdf"
             >
-              {/* {({ loading }) => (
+              {({ loading }) => (
                 <Button variant="primary" disabled={loading}>
                   <Download size={16} />
                   {loading ? "Preparing..." : "Download PDF"}
                 </Button>
-              )} */}
+              )}
             </PDFDownloadLink>
           </div>
         </div>
@@ -60,6 +83,13 @@ const ExportHandler = ({ name }) => {
       Export
     </Button>
   );
+};
+
+type UserMetaDataItem = {
+  id: number;
+  value: string;
+  isUrl?: boolean;
+  url?: string;
 };
 
 const Editor = () => {
@@ -76,8 +106,23 @@ const Editor = () => {
   const [droppedSubsections, setDroppedSubsections] = useState<any[]>([]);
   const [showNameInput, setShowNameInput] = useState(false);
   const [name, setName] = useState("");
+  const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
 
-  const parts = useMemo(() => ["menu", "sections"], [])
+  const parts = useMemo(() => ["menu", "sections"], []);
+
+  const addMetadatas = () => {
+    setMetadatas([...metadatas, { id: Date.now(), value: "" }]);
+  };
+
+  const removeMetadatas = (id: number) => {
+    setMetadatas(metadatas.filter((field) => field.id !== id));
+  };
+
+  const updateMetadatas = (id: number, value: string) => {
+    setMetadatas(
+      metadatas.map((field) => (field.id === id ? { ...field, value } : field))
+    );
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -240,13 +285,32 @@ const Editor = () => {
           >
             {/* Control Bar */}
             <div className="flex items-center gap-4 p-2 bg-white border-b">
-              <ExportHandler name={name} subsections={droppedSubsections} />
+              {/* <ExportHandler name={name} subsections={droppedSubsections} /> */}
+              <ExportHandler name={name} metadatas={metadatas} />
               {/* <Button onClick={() => console.log("Button 2")} variant="secondary">
               Button 2
             </Button>
             <Button onClick={() => console.log("Button 3")} variant="outline">
               Button 3
             </Button> */}
+              <input
+                type="text"
+                value={newSectionName}
+                onChange={(e) => {
+                  setNewSectionName(e.target.value);
+                }}
+                className="w-full p-2 rounded"
+                placeholder="Add section name"
+              />
+              <Button
+                onClick={() => {
+                  if (newSectionName == "") return;
+                  newSection(newSectionName, newSectionName);
+                  setNewSectionName("");
+                }}
+              >
+                Add
+              </Button>
             </div>
 
             {/* Main Content */}
@@ -264,8 +328,37 @@ const Editor = () => {
                         placeholder="YOUR NAME"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="text-4xl font-bold text-center w-full border-b-2 border-gray-200 focus:outline-none focus:border-gray-400"
+                        className="text-3xl font-bold text-center w-full  border-gray-200 focus:outline-none "
                       />
+                      {/* <input
+                        type="text"
+                        placeholder="email"
+                        value={contact}
+                        onChange={(e) => setContact(e.target.value)}
+                        className="w-full text-center border-gray-200 focus:outline-none "
+                      /> */}
+                      <div className="flex flex-wrap items-center justify-center gap-4 text-gray-600">
+                        {metadatas.map((field, index) => (
+                          <React.Fragment key={field.id}>
+                            {index > 0 && <span>-</span>}
+                            <ContactInfo
+                              value={field.value}
+                              onChange={(value) =>
+                                updateMetadatas(field.id, value)
+                              }
+                              onRemove={() => removeMetadatas(field.id)}
+                            />
+                          </React.Fragment>
+                        ))}
+                        {metadatas.length < 5 && (
+                          <button
+                            onClick={addMetadatas}
+                            className="text-blue-500 hover:text-blue-600"
+                          >
+                            <Plus size={12} />
+                          </button>
+                        )}
+                      </div>
                       <div className="flex flex-wrap items-center justify-center gap-4 text-gray-600"></div>
                     </div>
                   </div>
@@ -274,33 +367,8 @@ const Editor = () => {
             </div>
             {Object.keys(editorState.sections).map((sectionKey, i) => {
               const section = editorState.sections[sectionKey];
-              return (
-                <Section
-                  key={i}
-                  section={section}
-                ></Section>
-              );
+              return <Section key={i} section={section}></Section>;
             })}
-            {/* <span style={{ backgroundColor: "aqua" }}> */}
-            <input
-              type="text"
-              value={newSectionName}
-              onChange={(e) => {
-                setNewSectionName(e.target.value);
-              }}
-              className="w-full p-2 mb-2 border rounded"
-              placeholder="Section name"
-            />
-            <Button
-              onClick={() => {
-                if (newSectionName == "") return;
-                newSection(newSectionName, newSectionName);
-                setNewSectionName("");
-              }}
-            >
-              Add section
-            </Button>
-            {/* </span> */}
           </div>
         </SortableContext>
       </DndContext>
