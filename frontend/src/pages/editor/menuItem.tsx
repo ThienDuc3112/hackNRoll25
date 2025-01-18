@@ -1,5 +1,3 @@
-// MenuItem.tsx
-import React from "react";
 import { SubsectionType, PointType } from "./types";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";

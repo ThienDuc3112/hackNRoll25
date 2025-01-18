@@ -36,20 +36,20 @@ export const MenuBar = ({
       style={{ width: `${dividerPosition}%` }}
     >
       {/** Render the items from the menu */}
-      {menu.map((itemId, i) => {
+      {menu.map((itemId) => {
         const item = itemMap[itemId];
         if (item.type === "SUBSECTION") {
           // SUBSECTION DISPLAY IN MENU ==================
           return (
             <Subsection
-              key={i}
+              key={item.id}
               subSection={item}
             />
           );
         } else {
           // BULLETPOINT DISPLAY IN MENU ==================
           return (
-            <BulletPoint key={i} point={item} />
+            <BulletPoint key={item.id} point={item} />
           );
         }
       })}

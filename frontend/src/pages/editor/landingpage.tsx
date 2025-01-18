@@ -1,4 +1,3 @@
-import React from "react";
 import { ArrowRight, FileText, Layout, Workflow, Download } from "lucide-react";
 
 const Feature = ({ icon: Icon, title, description }) => (
@@ -108,7 +107,7 @@ const LandingPage = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Add Your Content</h3>
               <p className="text-gray-600">
-              Fill in your details about your education, skills, etc.
+                Fill in your details about your education, skills, etc.
               </p>
             </div>
             <div className="text-center">

@@ -36,8 +36,8 @@ const Subsection = ({
       </div>
 
       <div>
-        {subSection.items.map((point, i) => (
-          <BulletPoint point={itemMap[point] as PointType} />
+        {subSection.items.map((point) => (
+          <BulletPoint key={point} point={itemMap[point] as PointType} />
         ))}
       </div>
 
