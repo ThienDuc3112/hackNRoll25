@@ -1,125 +1,21 @@
 import { DndContext, DragEndEvent, UniqueIdentifier, useDraggable, useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { atom, useAtom } from 'jotai';
 import { ReactNode, useState } from 'react';
-
-type idItem = string
-
-type Point = {
-  id: idItem,
-  type: "POINT",
-  data: string
-}
-
-type Subsection = {
-  id: idItem,
-  type: "SUBSECTION",
-  title: string,
-  timeRange: string,
-  description: string,
-  children: Point[]
-}
-
-type Item = Point | Subsection
-
-type Section = {
-  id: string,
-  displayName: string,
-  items: idItem[]
-}
-
-type EditorState = {
-  menu: idItem[]
-  sections: Record<string, Section>,
-  itemMap: Record<string, Item>
-}
-
-const editorAtom = atom({
-  menu: ["test", "skill", "education"],
-  sections: {},
-  itemMap: {
-    test: {
-      type: "POINT",
-      data: "Test point 1",
-      id: "test"
-    },
-    skill: {
-      type: "POINT",
-      data: "Skill: CSS, JS, HTML, Golang",
-      id: "skill"
-    },
-    education: {
-      type: "POINT",
-      data: "Bachelor of Engineering in Computer Enginnering (with Honours*)",
-      id: "education"
-    },
-  }
-} as EditorState)
-
-const filterSection = (sections: Record<string, Section>, itemId: idItem): Record<string, Section> => {
-  const newSections = { ...sections }
-  for (const sectionKey in newSections) {
-    newSections[sectionKey] = { ...newSections[sectionKey] }
-    newSections[sectionKey].items = newSections[sectionKey].items.filter(val => val !== itemId)
-  }
-  return newSections
-}
-
-const useEditorAtom = () => {
-  const [editorState, setEditorState] = useAtom(editorAtom)
-
-  const move = (itemId: string, sectionId: string) => {
-    setEditorState(prev => {
-      if (!prev.itemMap[itemId]) return prev;
-
-      const newState = {
-        itemMap: prev.itemMap,
-        sections: filterSection(prev.sections, itemId),
-        menu: prev.menu.filter(val => val !== itemId)
-      }
-
-      if (sectionId === "") {
-        newState.menu.push(itemId)
-      } else if (!prev.sections[sectionId]) {
-        // Handled later
-        return prev
-      } else {
-        newState.sections[sectionId].items.push(itemId)
-      }
-
-      return newState
-    })
-  }
-
-  const newSection = (id: string, name: string) => {
-    setEditorState(prev => ({
-      ...prev, sections: {
-        ...prev.sections,
-        [name]: {
-          id: id,
-          displayName: name,
-          items: []
-        }
-      }
-    }))
-  }
-
-  return { editorState, move, newSection }
-}
-
+import { useEditorAtom } from './state';
+import { IdItemType } from './types';
 
 const Editor = () => {
   const [newSectionName, setNewSectionName] = useState<string>("")
   const { editorState, move, newSection } = useEditorAtom()
 
   const onDragEnd = (e: DragEndEvent) => {
-    if (!e.over) return;
-    const overId = e.over.id as unknown as string
-    const activeId = e.active.id as unknown as string
-    move(activeId, overId)
+    //if (!e.over) return;
+    //const overId = e.over.id as unknown as string
+    //const activeId = e.active.id as unknown as string
+    //move(activeId, overId)
   }
 
-  const ItemIdListToView = (props: { items: idItem[] }) => {
+  const ItemIdListToView = (props: { items: IdItemType[] }) => {
     return <>
       {props.items.map((id, i) => {
         const item = editorState.itemMap[id]

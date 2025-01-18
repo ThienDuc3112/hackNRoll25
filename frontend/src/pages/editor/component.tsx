@@ -1,22 +1,21 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Item } from "./types";
+import { ItemType } from "./types";
 
 type ComponentProp = {
-  item: Item,
-  data: {
-    sortable: {
-      containerId: string,
-      index: number
-    }
-  }
+  item: ItemType,
+  index: number,
+  containerId?: string
 };
 
 export const Component = (props: ComponentProp) => {
   const { attributes, listeners, transform, setNodeRef, active, transition } = useSortable(
     {
       id: props.item.id,
-      data: props.data
+      data: {
+        containerId: props.containerId,
+        index: props.index,
+      }
     }
   );
   return (
@@ -29,8 +28,6 @@ export const Component = (props: ComponentProp) => {
         transform: CSS.Translate.toString(transform),
         transition: transition,
         backgroundColor: active && active.id == props.item.id ? 'blue' : undefined,
-        width: "fit-content",
-        height: "fit-content"
       }}
     >
       {props.item.type === "POINT" ?

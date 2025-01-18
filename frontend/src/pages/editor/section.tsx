@@ -1,5 +1,5 @@
-import { Section as SectionType } from "./types";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SectionType as SectionType } from "./types";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Component } from "./component";
 import { useAtomValue } from "jotai";
 import { itemMapAtom } from "./state";
@@ -11,7 +11,7 @@ type SectionProp = {
 export const Section = (props: SectionProp) => {
   const itemMap = useAtomValue(itemMapAtom);
   return (
-    <SortableContext items={props.section.items} id={props.section.id}>
+    <SortableContext items={props.section.items} strategy={verticalListSortingStrategy} id={props.section.id}>
       <div
         style={{
           minWidth: 50,
@@ -37,12 +37,8 @@ export const Section = (props: SectionProp) => {
               <Component
                 item={itemMap[item]}
                 key={i}
-                data={{
-                  sortable: {
-                    containerId: props.section.id,
-                    index: i,
-                  },
-                }}
+                index={i}
+                containerId={props.section.id}
               />
             ))}
           </div>
