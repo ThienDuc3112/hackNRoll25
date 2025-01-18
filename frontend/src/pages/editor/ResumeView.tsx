@@ -1,17 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
-import { IdItemType, SectionType, UserMetaDataItem } from "./types";
+import { useMemo, useState } from "react";
+import { SectionType, UserMetaDataItem } from "./types";
 import { ContactInfo, ExportHandler } from "./helpers";
 import Button from "./button";
 import { Plus } from "lucide-react";
 import { Section } from "./section";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useAtomValue } from "jotai";
-import { activeAtom, itemMapAtom } from "./state";
+import { activeAtom } from "./state";
 import { DragOverlay } from "@dnd-kit/core";
 import { createPortal } from "react-dom";
-import { CSS } from "@dnd-kit/utilities"
-import Subsection from "./subsection";
-import BulletPoint from "./bulletpoint";
+import { ItemView } from "./ItemView";
 
 type ResumeViewProps = {
   dividerPosition: number;
@@ -25,46 +23,8 @@ export const ResumeView = ({
   newSection,
 }: ResumeViewProps) => {
   const activeId = useAtomValue(activeAtom)
-  const itemMap = useAtomValue(itemMapAtom)
   console.log(activeId)
 
-  const ItemView = useCallback(({ itemId, parentContainerId }: { itemId: IdItemType, parentContainerId: string }) => {
-    const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
-      id: itemId,
-      data: {
-        type: "ITEM",
-        parentContainerId
-      }
-    })
-    const style = {
-      transition: transition,
-      transform: CSS.Transform.toString(transform)
-    }
-
-    if (isDragging) {
-      return <div className="h-[50px] bg-gray-50"
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={{ ...style, opacity: 1 }}
-      />
-    }
-
-    const item = itemMap[itemId];
-    return <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      {
-        item.type === "SUBSECTION" ?
-          <Subsection key={item.id} allowEdit={false} subSection={item} />
-          :
-          <BulletPoint key={item.id} point={item} />
-      }
-    </div>
-  }, [])
 
   // Resume header fields
   const [name, setName] = useState("");

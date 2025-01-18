@@ -1,56 +1,13 @@
-import { useAtomValue } from "jotai";
-import { itemMapAtom } from "./state";
-import { IdItemType, SectionType } from "./types";
-import Subsection from "./subsection";
-import BulletPoint from "./bulletpoint";
+import { SectionType } from "./types";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
-import { useCallback } from "react";
+import { ItemView } from "./ItemView";
 
 type SectionProp = {
   section: SectionType;
 };
 
 export const Section = ({ section }: SectionProp) => {
-  const itemMap = useAtomValue(itemMapAtom);
-
-  const ItemView = useCallback(({ itemId, parentContainerId }: { itemId: IdItemType, parentContainerId: string }) => {
-    const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
-      id: itemId,
-      data: {
-        type: "ITEM",
-        parentContainerId
-      }
-    })
-    const style = {
-      transition: transition,
-      transform: CSS.Transform.toString(transform)
-    }
-
-    if (isDragging) {
-      return <div className="h-[40px] bg-gray-50"
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={{ ...style, opacity: 1 }}
-      />
-    }
-
-    const item = itemMap[itemId];
-    return <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
-      {
-        item.type === "SUBSECTION" ?
-          <Subsection key={item.id} allowEdit={false} subSection={item} />
-          :
-          <BulletPoint key={item.id} point={item} />
-      }
-    </div>
-  }, [])
 
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: section.id,
@@ -93,10 +50,10 @@ export const Section = ({ section }: SectionProp) => {
       <div className="h-px bg-gray-200 mb-4" />
 
       {/* Droppable Area */}
-      <div className="min-h-[120px]">
+      <div className="min-h-[20px]">
         <div>
           {section.items.length === 0 && (
-            <div className="h-32 border border-dashed border-gray-200 rounded bg-gray-50 flex items-center justify-center">
+            <div className="h-20 border border-dashed border-gray-200 rounded bg-gray-50 flex items-center justify-center">
               <span className="text-gray-400">Drop items here</span>
             </div>
           )}

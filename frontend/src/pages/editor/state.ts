@@ -11,6 +11,11 @@ export const editorAtom = atom<EditorStateType>({
       displayName: "Default Section",
       items: ["test", "skill", "test2"],
     },
+    {
+      id: "project-section",
+      displayName: "Projects",
+      items: ["project"],
+    },
   ],
   itemMap: {
     test: {
