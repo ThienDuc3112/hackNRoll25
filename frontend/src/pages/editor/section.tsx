@@ -26,7 +26,8 @@ export const Section = ({ section }: SectionProp) => {
       }
     })
     const style = {
-      transition, transform: CSS.Transform.toString(transform)
+      transition: transition,
+      transform: CSS.Transform.toString(transform)
     }
 
     if (isDragging) {
@@ -103,12 +104,12 @@ export const Section = ({ section }: SectionProp) => {
             </div>
           )}
           <SortableContext items={section.items} strategy={verticalListSortingStrategy}>
-            {section.items.map((itemId) => <ItemView parentContainerId={section.id} itemId={itemId} />)}
+            {section.items.map((itemId) => <ItemView key={itemId} parentContainerId={section.id} itemId={itemId} />)}
           </SortableContext>
           {
-            createPortal(
+            activeId && activeId.type == "ITEM" && createPortal(
               <DragOverlay>
-                {activeId && activeId.type == "ITEM" && <ItemView itemId={activeId.id as string} />}
+                {<ItemView parentContainerId="" itemId={activeId.id as string} />}
               </DragOverlay>,
               document.body
             )

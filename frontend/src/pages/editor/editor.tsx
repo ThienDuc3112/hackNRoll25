@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
-import { DndContext, DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragCancelEvent, DragEndEvent, DragMoveEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
 import { useSetAtom } from "jotai";
 
 const Editor = () => {
@@ -41,7 +41,8 @@ const Editor = () => {
   }
 
   const onDragEnd = (e: DragEndEvent) => {
-    setActive(null)
+    console.log("OnDragEnd called")
+    setActive(() => null)
     if (e.active.data.current?.type === "SECTION") {
       if (!e.over || !e.over.data.current) {
         return;
