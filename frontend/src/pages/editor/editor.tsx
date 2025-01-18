@@ -11,9 +11,10 @@ import { ReactNode, useState } from "react";
 import Button from "./button";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import Mydocument from "./mydocument";
-import { X, Plus, Edit2, Download } from "lucide-react";
+import { X, Download } from "lucide-react";
 import { Textarea } from "./textarea";
-
+import Subsection from "./subsection";
+// import { Section } from "./section";
 ////////////////////////////////////////////////////////////////////////
 type idItem = string;
 
@@ -131,42 +132,23 @@ type SectionProp = {
   children?: ReactNode;
 };
 
-const Section = (props: SectionProp) => {
+const Section = ({ id, title, children }: SectionProp) => {
   const { isOver, setNodeRef } = useDroppable({
-    id: props.id,
+    id,
   });
+
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        minWidth: 50,
-        padding: 8,
-        width: "100%",
-      }}
-    >
+    <div ref={setNodeRef} className="min-w-[50px] w-full p-2">
       <div
-        style={{
-          border: "dashed 1px",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "200px",
-          backgroundColor: isOver ? "green" : "grey",
-        }}
+        className={`border border-dashed flex flex-col min-h-[200px] ${
+          isOver ? "bg-green-500/20" : "bg-gray-100"
+        }`}
       >
-        <span style={{ color: "white", textAlign: "center" }}>
-          {props.title}
-        </span>
-        <div style={{ width: "100%", height: "100%", margin: 0 }}>
-          {props.children}
-        </div>
+        <span className="text-center p-2 font-medium">{title}</span>
+        <div className="w-full h-full m-0">{children}</div>
       </div>
     </div>
   );
-};
-
-type ComponentProp = {
-  id: UniqueIdentifier;
-  children?: ReactNode;
 };
 
 const ExportHandler = ({ name }) => {
@@ -216,48 +198,25 @@ const ExportHandler = ({ name }) => {
   );
 };
 
-// const Component = (props: ComponentProp) => {
-//   const { attributes, listeners, transform, setNodeRef, active } = useDraggable(
-//     {
-//       id: props.id,
-//       attributes: {
-//         tabIndex: 0,
-//       },
-//     }
-//   );
-//   return (
-//     <div
-//       ref={setNodeRef}
-//       {...listeners}
-//       {...attributes}
-//       style={{
-//         border: "solid 1px",
-//         transform: CSS.Translate.toString(transform),
-//         backgroundColor: active && active.id == props.id ? "blue" : undefined,
-//         width: "fit-content",
-//         height: "fit-content",
-//       }}
-//     >
-//       {props.children}
-//     </div>
-//   );
-// };
-
 const Editor = () => {
   const [dividerPosition, setDividerPosition] = useState(50);
   const [newSectionName, setNewSectionName] = useState<string>("");
   const { editorState, move, newSection } = useEditorAtom();
-  const [components, setComponents] = useState([
-    "Education",
-    "Experience",
-    "Skills",
+  const [subsections, setSubsections] = useState([
+    "Subsection 1",
+    "Subsection 2",
+    "Subsection 3",
   ]);
-  const [newComponentName, setNewComponentName] = useState("");
+  const [newSubsectionName, setNewSubsectionName] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [droppedSubsections, setDroppedSubsections] = useState<any[]>([]);
   const [showNameInput, setShowNameInput] = useState(false);
   const [name, setName] = useState("");
 
-  const handleMouseDown = () => {
-    const handleMouseMove = (event: { clientX: number }) => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    const handleMouseMove = (event: MouseEvent) => {
       const newDividerPosition = (event.clientX / window.innerWidth) * 100;
       setDividerPosition(Math.max(10, Math.min(newDividerPosition, 90)));
     };
@@ -270,35 +229,78 @@ const Editor = () => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   };
+
   const onDragEnd = (e: DragEndEvent) => {
-    if (!e.over) return;
     const { over, active } = e;
-    if (!active.data.current) {
-      console.log("active:", active, "\nover:", over);
-      console.log("SOMETHING HAPPEN WTF");
+    if (!over || !active.data.current) return;
+
+    if (active.data.current.type === "subsection") {
+      handleDrop(active.data.current.name, active.data.current.fields);
       return;
     }
-    if (!over.data.current) {
-      move(active.id as string, over.id as string, 0);
-      return;
+
+    const overId = over.id as string;
+    const activeId = active.id as string;
+    const overData = over.data.current;
+
+    if (!overData) {
+      move(activeId, overId, 0);
+    } else {
+      const index = overData.items ? overData.items.length : 0;
+      move(activeId, overId, index);
     }
   };
 
-  // const removeComponent = (name) => {
-  //   setComponents(components.filter((comp) => comp !== name));
-  // };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDrop = (subsectionName: string, fields: any[]) => {
+    const isAlreadyDropped = droppedSubsections.some(
+      (subsec) => subsec.name === subsectionName
+    );
 
-  const addNewComponent = () => {
-    if (newComponentName.trim()) {
-      setComponents([...components, newComponentName.trim()]);
-      setNewComponentName("");
+    if (!isAlreadyDropped) {
+      setDroppedSubsections([
+        ...droppedSubsections,
+        {
+          id: Date.now(),
+          name: subsectionName,
+          fields: fields.map((field) => ({
+            ...field,
+            content: field.content || "",
+          })),
+        },
+      ]);
+    }
+  };
+
+  const removeSubsection = (name) => {
+    setSubsections(subsections.filter((subsec) => subsec !== name));
+  };
+
+  const removeDroppedSubsection = (subsectionId) => {
+    setDroppedSubsections(
+      droppedSubsections.filter((subsec) => subsec.id !== subsectionId)
+    );
+  };
+
+  const addNewSubsection = () => {
+    if (newSubsectionName.trim()) {
+      setSubsections([...subsections, newSubsectionName.trim()]);
+      setNewSubsectionName("");
       setShowNameInput(false);
     }
   };
+
+  const updateDroppedSubsectionFields = (subsectionId, newFields) => {
+    setDroppedSubsections(
+      droppedSubsections.map((subsec) =>
+        subsec.id === subsectionId ? { ...subsec, fields: newFields } : subsec
+      )
+    );
+  };
+
   return (
     <DndContext
       onDragStart={() => {
-        //setActive(e.active.id)
         console.log(editorState);
       }}
       onDragEnd={onDragEnd}
@@ -311,18 +313,31 @@ const Editor = () => {
           className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
           style={{ width: `${dividerPosition}%` }}
         >
+          {subsections.map((name) => (
+            <Subsection
+              key={name}
+              name={name}
+              onRemove={() => removeSubsection(name)}
+            />
+          ))}
           {showNameInput ? (
             <div className="w-full p-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg">
               <input
                 type="text"
-                value={newComponentName}
-                onChange={(e) => setNewComponentName(e.target.value)}
+                value={newSectionName}
+                onChange={(e) => setNewSectionName(e.target.value)}
                 className="w-full p-2 mb-2 border rounded"
-                placeholder="Component name"
+                placeholder="New section name"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && newSectionName.trim()) {
+                    newSection(newSectionName, newSectionName);
+                    setNewSectionName("");
+                  }
+                }}
               />
               <div className="flex space-x-2">
                 <button
-                  onClick={addNewComponent}
+                  onClick={addNewSubsection}
                   className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >
                   Add
@@ -330,7 +345,7 @@ const Editor = () => {
                 <button
                   onClick={() => {
                     setShowNameInput(false);
-                    setNewComponentName("");
+                    setNewSubsectionName("");
                   }}
                   className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
                 >
@@ -343,7 +358,7 @@ const Editor = () => {
               onClick={() => setShowNameInput(true)}
               className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
             >
-              + Add Component
+              + Add Subsection
             </button>
           )}
         </div>
@@ -358,8 +373,8 @@ const Editor = () => {
           style={{ width: `${100 - dividerPosition}%` }}
         >
           {/* Control Bar */}
-          <div className="flex items-center gap-4 p-4 bg-white border-b">
-            <ExportHandler name={name} />
+          <div className="flex items-center gap-4 p-2 bg-white border-b">
+            <ExportHandler name={name} subsections={droppedSubsections} />
             {/* <Button onClick={() => console.log("Button 2")} variant="secondary">
               Button 2
             </Button>
@@ -369,10 +384,10 @@ const Editor = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 p-8 flex items-center justify-center">
+          <div className=" scroll-m-0 flex-1 p-2 flex items-center justify-center">
             <div
-              className="relative w-[595px] "
-              style={{ aspectRatio: "1/1.2" }}
+              className="relative h-full"
+              style={{ aspectRatio: "1/1.4142" }}
             >
               <div className="absolute inset-0 bg-white rounded shadow-lg p-8 overflow-y-auto">
                 <div className="space-y-8">
@@ -385,8 +400,7 @@ const Editor = () => {
                       onChange={(e) => setName(e.target.value)}
                       className="text-4xl font-bold text-center w-full border-b-2 border-gray-200 focus:outline-none focus:border-gray-400"
                     />
-                    <div className="flex flex-wrap items-center justify-center gap-4 text-gray-600">
-                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-gray-600"></div>
                   </div>
                 </div>
               </div>
@@ -402,24 +416,26 @@ const Editor = () => {
               ></Section>
             );
           })}
-          <span style={{ backgroundColor: "aqua" }}>
-            <input
-              style={{ border: "solid 1px" }}
-              value={newSectionName}
-              onChange={(e) => {
-                setNewSectionName(e.target.value);
-              }}
-            />
-            <button
-              onClick={() => {
-                if (newSectionName == "") return;
-                newSection(newSectionName, newSectionName);
-                setNewSectionName("");
-              }}
-            >
-              Add section
-            </button>
-          </span>
+          {/* <span style={{ backgroundColor: "aqua" }}> */}
+          <input
+            type="text"
+            value={newSectionName}
+            onChange={(e) => {
+              setNewSectionName(e.target.value);
+            }}
+            className="w-full p-2 mb-2 border rounded"
+            placeholder="Section name"
+          />
+          <Button
+            onClick={() => {
+              if (newSectionName == "") return;
+              newSection(newSectionName, newSectionName);
+              setNewSectionName("");
+            }}
+          >
+            Add section
+          </Button>
+          {/* </span> */}
         </div>
       </div>
     </DndContext>
