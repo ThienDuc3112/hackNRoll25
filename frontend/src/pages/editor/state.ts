@@ -3,7 +3,7 @@ import { EditorStateType, ItemType } from "./types"
 import { arrayMove } from "@dnd-kit/sortable"
 
 export const editorAtom = atom<EditorStateType>({
-  menu: ["test", "education"],
+  menu: ["test", "education", "project"],
   sections: [
     {
       id: "default",
@@ -19,6 +19,14 @@ export const editorAtom = atom<EditorStateType>({
       items: ["test2"],
       description: "This is a test subsection",
       timeRange: "beginning of time - now"
+    },
+    project: {
+      type: "SUBSECTION",
+      id: "project",
+      title: "Resume Builder",
+      items: [],
+      description: "This very website",
+      timeRange: "now - now"
     },
     "test2": {
       type: "POINT",

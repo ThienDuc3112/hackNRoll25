@@ -1,16 +1,10 @@
-import React, { useMemo, useState } from "react";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import React, { useState } from "react";
 import { X, Download, Plus } from "lucide-react";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 
 import Button from "./button";
 import Mydocument from "./mydocument";
-import { Textarea } from "./textarea";
 import Subsection from "./subsection";
-import BulletPoint from "./bulletpoint";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
 
@@ -105,13 +99,9 @@ const Editor = () => {
   const [newSectionName, setNewSectionName] = useState<string>("");
 
   // Access your editor state & actions
-  const { editorState, move, newSection } = useEditorAtom();
+  const { editorState, newSection } = useEditorAtom();
 
   // Each section uses an ID "section-xxx" for sorting
-  const sectionIds = useMemo(
-    () => editorState.sections.map((val) => `section-${val.id}`),
-    [editorState]
-  );
 
   // Track item/section being dragged
   //const [activeId, setActiveId] = useState<UniqueIdentifier | null>("");
@@ -128,9 +118,6 @@ const Editor = () => {
     "Subsection 2",
     "Subsection 3",
   ]);
-
-  // Not used heavily, but your code references it
-  const parts = useMemo(() => ["right", "vertical", "left"], []);
 
   /** Contact info handlers */
   const addMetadatas = () => {
@@ -308,7 +295,7 @@ const Editor = () => {
                     {index > 0 && <span>-</span>}
                     <ContactInfo
                       value={field.value}
-                      onChange={(value) => updateMetadatas(field.id, value)}
+                      onChange={(value: string) => updateMetadatas(field.id, value)}
                       onRemove={() => removeMetadatas(field.id)}
                     />
                   </React.Fragment>
@@ -328,14 +315,9 @@ const Editor = () => {
                  * SortableContext that contains the sections
                  * We'll show them inside this A4 container
                  */}
-            <SortableContext
-              strategy={verticalListSortingStrategy}
-              items={sectionIds}
-            >
-              {editorState.sections.map((section) => (
-                <Section key={section.id} section={section} />
-              ))}
-            </SortableContext>
+            {editorState.sections.map((section) => (
+              <Section key={section.id} section={section} />
+            ))}
           </div>
         </div>
 
