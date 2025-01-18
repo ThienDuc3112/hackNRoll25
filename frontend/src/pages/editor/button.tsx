@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
 const Button = ({ onClick, children, variant = "primary", disabled }: {
-  onClick: () => void,
+  onClick?: () => void,
   children: ReactNode,
-  variant: "primary" | "secondary" | "outline",
+  variant?: "primary" | "secondary" | "outline",
   disabled?: boolean
 }) => {
   const baseStyles =
