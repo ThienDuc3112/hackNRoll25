@@ -4,8 +4,6 @@ import { PointType, SubsectionType } from "./types";
 import { useAtomValue } from "jotai";
 import { itemMapAtom, useEditorAtom } from "./state";
 import BulletPoint from "./bulletpoint";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities"
 
 const Subsection = ({
   subSection,
@@ -20,25 +18,11 @@ const Subsection = ({
   const { newBulletPoint, addPointToSubSection } = useEditorAtom();
   const [newBulletPointName, setNewBulletPointName] = useState("");
 
-  const { setNodeRef, attributes, listeners, transform, transition } = useSortable({
-    id: subSection.id,
-    data: {
-      type: "ITEM"
-    }
-  })
-  const style = {
-    transition, transform: CSS.Transform.toString(transform)
-  }
-
   return (
     <div
       className={"w-full p-4 mb-4 rounded-lg bg-white shadow-md cursor-move"}
-      ref={setNodeRef}
-      style={style}
     >
       <div
-        {...attributes}
-        {...listeners}
         className="flex justify-between items-center mb-3"
       >
         <h3 className="font-semibold text-lg">{subSection.title}</h3>
