@@ -7,7 +7,7 @@ import Mydocument from "./mydocument";
 import Subsection from "./subsection";
 import { useEditorAtom } from "./state";
 import { Section } from "./section";
-import { IdItemType, ItemType, UserMetaDataItem } from "./types";
+import { IdItemType, ItemType, SectionType, UserMetaDataItem } from "./types";
 import { SetStateAction } from "jotai";
 
 type StateSetter<T> = Dispatch<SetStateAction<T>>
@@ -169,99 +169,140 @@ const Editor = () => {
       />
 
       {/** ==================== RIGHT SIDE (Resume Document) ==================== */}
-      <div
-        className="flex overflow-y-auto flex-col h-full bg-gray-100"
-        style={{ width: `${100 - dividerPosition}%` }}
-      >
-        {/** ======= CONTROL BAR ======= */}
-        <div className="flex items-center gap-4 p-2 bg-white border-b">
-          <ExportHandler name={name} metadatas={metadatas} />
-          <input
-            type="text"
-            value={newSectionName}
-            onChange={(e) => setNewSectionName(e.target.value)}
-            className="w-full p-2 rounded"
-            placeholder="Add section name"
-          />
-          <Button
-            onClick={() => {
-              if (newSectionName === "") return;
-              newSection(newSectionName, newSectionName);
-              setNewSectionName("");
-            }}
-          >
-            Add
-          </Button>
-        </div>
-
-        {/** ====== MAIN DOCUMENT (A4) ====== */}
-        <div className="flex-1 flex items-center justify-center p-4">
-          {/**
-               * This container simulates a real A4 page
-               * - 210mm x 297mm is standard A4
-               * - We can set overflow-y to auto if content is too long
-               */}
-          <div
-            className="relative bg-white shadow-lg"
-            style={{
-              width: "210mm",
-              height: "297mm",
-              margin: "0 auto",
-              padding: "16px",
-              overflowY: "auto",
-              fontSize: "12px", // smaller font to fit more content
-            }}
-          >
-            {/** ========== NAME & CONTACT INFO ========== */}
-            <div className="text-center mb-6">
-              <input
-                type="text"
-                placeholder="YOUR NAME"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="font-bold text-2xl text-center w-full border-b border-gray-200 focus:outline-none"
-                style={{ marginBottom: "8px" }}
-              />
-
-              {/** Contact Info */}
-              <div className="flex flex-wrap items-center justify-center gap-2 text-gray-600">
-                {metadatas.map((field, index) => (
-                  <React.Fragment key={field.id}>
-                    {index > 0 && <span>-</span>}
-                    <ContactInfo
-                      value={field.value}
-                      onChange={(value: string) => updateMetadatas(field.id, value)}
-                      onRemove={() => removeMetadatas(field.id)}
-                    />
-                  </React.Fragment>
-                ))}
-                {metadatas.length < 5 && (
-                  <button
-                    onClick={addMetadatas}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    <Plus size={12} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/**
-                 * SortableContext that contains the sections
-                 * We'll show them inside this A4 container
-                 */}
-            {editorState.sections.map((section) => (
-              <Section key={section.id} section={section} />
-            ))}
-          </div>
-        </div>
-
-      </div >
-
+      <RightSide
+        addMetadatas={addMetadatas}
+        updateMetadatas={updateMetadatas}
+        name={name}
+        setName={setName}
+        newSection={newSection}
+        setNewSectionName={setNewSectionName}
+        newSectionName={newSectionName}
+        metadatas={metadatas}
+        dividerPosition={dividerPosition}
+        sections={editorState.sections}
+        removeMetadatas={removeMetadatas}
+      />
       {/** OPTIONAL: DragOverlay for custom drag previews */}
     </div >
   );
 };
+
+type RightSideProps = {
+  dividerPosition: number
+  newSectionName: string
+  setNewSectionName: StateSetter<string>
+  newSection: (id: string, name: string) => void
+  sections: SectionType[]
+  metadatas: UserMetaDataItem[]
+  name: string
+  setName: StateSetter<string>
+  updateMetadatas: (id: number, value: string) => void
+  removeMetadatas: (id: number) => void
+  addMetadatas: () => void
+}
+
+const RightSide = ({
+  sections,
+  dividerPosition,
+  metadatas,
+  name,
+  setName,
+  newSectionName,
+  setNewSectionName,
+  newSection,
+  updateMetadatas,
+  removeMetadatas,
+  addMetadatas
+}: RightSideProps) => {
+  return <div
+    className="flex overflow-y-auto flex-col h-full bg-gray-100"
+    style={{ width: `${100 - dividerPosition}%` }}
+  >
+    {/** ======= CONTROL BAR ======= */}
+    <div className="flex items-center gap-4 p-2 bg-white border-b">
+      <ExportHandler name={name} metadatas={metadatas} />
+      <input
+        type="text"
+        value={newSectionName}
+        onChange={(e) => setNewSectionName(e.target.value)}
+        className="w-full p-2 rounded"
+        placeholder="Add section name"
+      />
+      <Button
+        onClick={() => {
+          if (newSectionName === "") return;
+          newSection(newSectionName, newSectionName);
+          setNewSectionName("");
+        }}
+      >
+        Add
+      </Button>
+    </div>
+
+    {/** ====== MAIN DOCUMENT (A4) ====== */}
+    <div className="flex-1 flex items-center justify-center p-4">
+      {/**
+               * This container simulates a real A4 page
+               * - 210mm x 297mm is standard A4
+               * - We can set overflow-y to auto if content is too long
+               */}
+      <div
+        className="relative bg-white shadow-lg"
+        style={{
+          width: "210mm",
+          height: "297mm",
+          margin: "0 auto",
+          padding: "16px",
+          overflowY: "auto",
+          fontSize: "12px", // smaller font to fit more content
+        }}
+      >
+        {/** ========== NAME & CONTACT INFO ========== */}
+        <div className="text-center mb-6">
+          <input
+            type="text"
+            placeholder="YOUR NAME"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="font-bold text-2xl text-center w-full border-b border-gray-200 focus:outline-none"
+            style={{ marginBottom: "8px" }}
+          />
+
+          {/** Contact Info */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-gray-600">
+            {metadatas.map((field, index) => (
+              <React.Fragment key={field.id}>
+                {index > 0 && <span>-</span>}
+                <ContactInfo
+                  value={field.value}
+                  onChange={(value: string) => updateMetadatas(field.id, value)}
+                  onRemove={() => removeMetadatas(field.id)}
+                />
+              </React.Fragment>
+            ))}
+            {metadatas.length < 5 && (
+              <button
+                onClick={addMetadatas}
+                className="text-blue-500 hover:text-blue-600"
+              >
+                <Plus size={12} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/**
+                 * SortableContext that contains the sections
+                 * We'll show them inside this A4 container
+                 */}
+        {sections.map((section) => (
+          <Section key={section.id} section={section} />
+        ))}
+      </div>
+    </div>
+  </div>
+}
+
 
 type LeftBarProps = {
   dividerPosition: number
