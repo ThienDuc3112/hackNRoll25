@@ -62,4 +62,13 @@ class UserLogout(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+class UserDetails(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    @extend_schema(
+        description='Get all info of the current user',
+    )
+    def get(self, request):
+        return Response({"user": user.private_details()},status=status.HTTP_200_OK)
         

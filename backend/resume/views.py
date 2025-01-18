@@ -14,6 +14,7 @@ from .serializers import (
 from django.conf import settings
 from .models import Resume, Section, SubSection, BulletPoint
 from drf_spectacular.utils import extend_schema
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,6 @@ class ResumeViews(APIView):
         request=ResumeCreateSerializer,
         description='User create new resume template',
     )
-
     def post(self, request: HttpRequest) -> Response:
         serializer = ResumeCreateSerializer(data=request.data)
 
@@ -38,6 +38,22 @@ class ResumeViews(APIView):
         response = Response({"resume": resume.details()}, status=status.HTTP_201_CREATED)
         return response
 
+    @extend_schema(
+        request=ResumeGetSerializer,
+        description='Get resume',
+    )
+    def get(self, request: HttpRequest) -> Response:
+        serializer = ResumeGetSerializer(data=request.query_params)
+        
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'))
+            return Response({"resume": resume}, status=HTTP_200_OK)
+        except Resume.DoesNotExist:
+            return Response({"error": "Resume id not found"}, status=404)
+    
 
 class SectionViews(APIView):
     permission_classes = (IsAuthenticated,)
@@ -54,7 +70,7 @@ class SectionViews(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            resume = Resume.objects.get(id=request.data.get('resume_id'))
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'))
         except Resume.DoesNotExist:
             return Response({"error": "Resume id not found"}, status=404)
 
@@ -64,6 +80,22 @@ class SectionViews(APIView):
         )
         response = Response({"section": section.details()}, status=status.HTTP_201_CREATED)
         return response
+    
+    @extend_schema(
+        request=SectionGetSerializer,
+        description='Get sections from a resume',
+    )
+    def get(self, request: HttpRequest) -> Response:
+        serializer = SectionGetSerializer(data=request.query_params)
+        
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            sections = Section.objects.filter(resume__id=serializer.validated_data.get('resume_id'))
+            return Response({"sections": sections}, status=HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=404)
 
 
 class SubSectionViews(APIView):
@@ -81,12 +113,12 @@ class SubSectionViews(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
         try:
-            resume = Resume.objects.get(id=request.data.get('resume_id'))
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'))
         except Resume.DoesNotExist:
             return Response({"error": "Resume id not found"}, status=404)
         
         try:
-            section = Section.objects.get(id=request.data.get('section_id'))
+            section = Section.objects.get(id=serializer.validated_data.get('section_id'))
         except Section.DoesNotExist:
             return Response({"error": "Section id not found"}, status=404)
 
@@ -116,12 +148,12 @@ class BulletPointViews(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            resume = Resume.objects.get(id=request.data.get('resume_id'))
+            resume = Resume.objects.get(id=serializer.validated_data.get('resume_id'))
         except Resume.DoesNotExist:
             return Response({"error": "Resume id not found"}, status=404)
         
         try:
-            sub_section = SubSection.objects.get(id=request.data.get('section_id'))
+            sub_section = SubSection.objects.get(id=serializer.validated_data.get('section_id'))
         except SubSection.DoesNotExist:
             return Response({"error": "Subsection id not found"}, status=404)
 

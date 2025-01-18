@@ -23,3 +23,11 @@ class BulletPointCreateSerializer(serializers.Serializer):
     data= serializers.CharField(required=True)
     resume_id = serializers.IntegerField(required=True)
     section_id = serializers.IntegerField(required=True)
+
+
+class ResumeGetSerializer(serializers.Serializer):
+    resume_id = serializers.IntegerField(required=True)
+
+
+class SectionGetSerializer(serializers.Serializer):
+    resume_id = serializers.IntegerField(required=True)
