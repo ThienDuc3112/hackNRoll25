@@ -4,7 +4,7 @@ const Button = ({ onClick, children, variant = "primary", disabled }: {
   onClick: () => void,
   children: ReactNode,
   variant: "primary" | "secondary" | "outline",
-  disabled: boolean
+  disabled?: boolean
 }) => {
   const baseStyles =
     "px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center gap-2";
