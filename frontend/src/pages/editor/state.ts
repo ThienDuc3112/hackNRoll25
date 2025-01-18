@@ -3,8 +3,42 @@ import { EditorStateType, ItemType, PointType, SubsectionType } from "./types";
 import { arrayMove } from "@dnd-kit/sortable";
 import { UniqueIdentifier } from "@dnd-kit/core";
 
+const initialItemMap: Record<string, ItemType> = {
+  test: {
+    type: "SUBSECTION",
+    id: "test",
+    title: "Test subsection",
+    items: ["education"],
+    description: "This is a test subsection",
+    timeRange: "beginning of time - now",
+  },
+  project: {
+    type: "SUBSECTION",
+    id: "project",
+    title: "Resume Builder",
+    items: [],
+    description: "This very website",
+    timeRange: "now - now",
+  },
+  test2: {
+    type: "POINT",
+    data: "Test point 2",
+    id: "test2",
+  },
+  skill: {
+    type: "POINT",
+    data: "Skill: CSS, JS, HTML, Golang",
+    id: "skill",
+  },
+  education: {
+    type: "POINT",
+    data: "Bachelor of Engineering in Computer Enginnering (with Honours*)",
+    id: "education",
+  },
+}
+
 export const editorAtom = atom<EditorStateType>({
-  menu: ["test", "education", "project"],
+  menu: Object.keys(initialItemMap),
   sections: [
     {
       id: "default",
@@ -17,39 +51,7 @@ export const editorAtom = atom<EditorStateType>({
       items: ["project"],
     },
   ],
-  itemMap: {
-    test: {
-      type: "SUBSECTION",
-      id: "test",
-      title: "Test subsection",
-      items: ["education"],
-      description: "This is a test subsection",
-      timeRange: "beginning of time - now",
-    },
-    project: {
-      type: "SUBSECTION",
-      id: "project",
-      title: "Resume Builder",
-      items: [],
-      description: "This very website",
-      timeRange: "now - now",
-    },
-    test2: {
-      type: "POINT",
-      data: "Test point 2",
-      id: "test2",
-    },
-    skill: {
-      type: "POINT",
-      data: "Skill: CSS, JS, HTML, Golang",
-      id: "skill",
-    },
-    education: {
-      type: "POINT",
-      data: "Bachelor of Engineering in Computer Enginnering (with Honours*)",
-      id: "education",
-    },
-  },
+  itemMap: initialItemMap,
 } as EditorStateType);
 
 export const itemMapAtom = atom<Record<string, ItemType>>(
@@ -60,7 +62,7 @@ export const useEditorAtom = () => {
   const [editorState, setEditorState] = useAtom(editorAtom);
 
   const move = (itemId: string, sectionId: string, targetIndex: number) => {
-    console.log(`move ${itemId} to ${sectionId}[${targetIndex}]`);
+    //console.log(`move ${itemId} to ${sectionId}[${targetIndex}]`);
     setEditorState((prev) => {
       if (!prev.itemMap[itemId]) return prev;
       //console.log("prev", prev)
@@ -68,7 +70,8 @@ export const useEditorAtom = () => {
       const newState = {
         itemMap: prev.itemMap,
         sections: [...prev.sections],
-        menu: prev.menu.filter((val) => val !== itemId),
+        //menu: prev.menu.filter((val) => val !== itemId),
+        menu: [...prev.menu]
       };
 
       newState.sections = newState.sections.map((section) => {
@@ -183,6 +186,6 @@ export const useEditorAtom = () => {
 };
 
 export const activeAtom = atom<{
-  type: "SECTION" | "ITEM"
+  type: "SECTION" | "ITEM" | "MENU_ITEM"
   id: UniqueIdentifier
 } | null>(null)

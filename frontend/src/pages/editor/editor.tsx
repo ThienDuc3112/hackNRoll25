@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
-import { DndContext, DragCancelEvent, DragEndEvent, DragMoveEvent, DragOverEvent, DragStartEvent } from "@dnd-kit/core";
-import { useSetAtom } from "jotai";
+import { DndContext, DragCancelEvent, DragEndEvent, DragMoveEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { useAtom, useSetAtom } from "jotai";
+import { createPortal } from "react-dom";
+import { Section } from "./section";
+import { ItemView } from "./ItemView";
+import { MenuItemView } from "./MenuItemView";
 
 const Editor = () => {
   // Divider state for left & right panes
@@ -26,7 +30,7 @@ const Editor = () => {
     window.addEventListener("mouseup", handleMouseUp);
   };
 
-  const setActive = useSetAtom(activeAtom)
+  const [activeId, setActive] = useAtom(activeAtom)
 
   const onDragStart = (e: DragStartEvent) => {
     console.log(e)
@@ -97,6 +101,18 @@ const Editor = () => {
           sections={editorState.sections}
         />
       </div>
+      {
+        createPortal(
+          <DragOverlay>
+            {activeId && activeId.type === "SECTION" && <Section section={(() => {
+              return editorState.sections.find(val => val.id === activeId.id)
+            })()!} />}
+            {activeId && activeId.type === "ITEM" && <ItemView parentContainerId="" itemId={activeId.id as string} />}
+            {activeId && activeId.type === "MENU_ITEM" && <MenuItemView itemId={(activeId.id as string).substring(5)} />}
+          </DragOverlay>,
+          document.body
+        )
+      }
     </DndContext>
   );
 };

@@ -5,11 +5,6 @@ import Button from "./button";
 import { Plus } from "lucide-react";
 import { Section } from "./section";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useAtomValue } from "jotai";
-import { activeAtom } from "./state";
-import { DragOverlay } from "@dnd-kit/core";
-import { createPortal } from "react-dom";
-import { ItemView } from "./ItemView";
 
 type ResumeViewProps = {
   dividerPosition: number;
@@ -22,10 +17,6 @@ export const ResumeView = ({
   dividerPosition,
   newSection,
 }: ResumeViewProps) => {
-  const activeId = useAtomValue(activeAtom)
-  console.log(activeId)
-
-
   // Resume header fields
   const [name, setName] = useState("");
 
@@ -137,17 +128,6 @@ export const ResumeView = ({
               <Section key={section.id} section={section} />
             ))}
           </SortableContext>
-          {
-            createPortal(
-              <DragOverlay>
-                {activeId && activeId.type === "SECTION" && <Section section={(() => {
-                  return sections.find(val => val.id === activeId.id)
-                })()!} />}
-                {activeId && activeId.type === "ITEM" && <ItemView parentContainerId="" itemId={activeId.id as string} />}
-              </DragOverlay>,
-              document.body
-            )
-          }
         </div>
       </div>
     </div>

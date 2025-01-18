@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IdItemType, ItemType, SubsectionType } from "./types";
 import { useEditorAtom } from "./state";
-import Subsection from "./subsection";
-import BulletPoint from "./bulletpoint";
 import { Plus } from "lucide-react";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { MenuItemView } from "./MenuItemView";
 
 type MenuBarProps = {
   dividerPosition: number;
@@ -26,6 +26,8 @@ export const MenuBar = ({
   const { newBulletPoint, newSubSection } = useEditorAtom();
   const [newGBulletPointName, setNewGBulletPointName] = useState("");
 
+  const items = useMemo(() => menu.map(val => `MENU-${val}`), [menu])
+
   const addNewSubsection = (subSection: SubsectionType) => {
     newSubSection(subSection);
   };
@@ -36,23 +38,9 @@ export const MenuBar = ({
       style={{ width: `${dividerPosition}%` }}
     >
       {/** Render the items from the menu */}
-      {menu.map((itemId) => {
-        const item = itemMap[itemId];
-        if (item.type === "SUBSECTION") {
-          // SUBSECTION DISPLAY IN MENU ==================
-          return (
-            <Subsection
-              key={item.id}
-              subSection={item}
-            />
-          );
-        } else {
-          // BULLETPOINT DISPLAY IN MENU ==================
-          return (
-            <BulletPoint key={item.id} point={item} />
-          );
-        }
-      })}
+      <SortableContext strategy={verticalListSortingStrategy} items={items}>
+        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} />)}
+      </SortableContext>
 
       {/** "Add Subsection" UI */}
       {showNameInput ? (
