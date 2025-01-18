@@ -5,13 +5,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.contrib.auth import login, logout
+from rest_framework import permissions, status
 from .serializers import (
     UserRegisterSerializer,
     UserLoginSerializer,
-    UserDetailSerializer,
 )
 from django.conf import settings
 from .models import User
+from drf_spectacular.utils import extend_schema
+
+logger = logging.getLogger(__name__)
 
 class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)

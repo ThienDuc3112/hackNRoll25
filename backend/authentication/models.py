@@ -15,4 +15,7 @@ class User(AbstractUser):
         return {
             "username": self.username,
             "email": self.email,
+            "bullet_points": self.bullet_points,
+            "sub_sections": self.sub_sections,
+            "resumes": self.resumes,
         }
