@@ -45,16 +45,11 @@ export const Section = ({ section }: SectionProp) => {
       {/* Droppable Area */}
       <div className="min-h-[120px]">
         <div>
-          {/*             
-            {section.items.map((itemId) => (
-              <Component key={itemId} item={itemMap[itemId]} />
-            ))}
-
-            {section.items.length === 0 && (
-              <div className="h-32 border border-dashed border-gray-200 rounded bg-gray-50 flex items-center justify-center">
-                <span className="text-gray-400">Drop items here</span>
-              </div>
-            )} */}
+          {section.items.length === 0 && (
+            <div className="h-32 border border-dashed border-gray-200 rounded bg-gray-50 flex items-center justify-center">
+              <span className="text-gray-400">Drop items here</span>
+            </div>
+          )}
           {section.items.map((itemId) => {
             const item = itemMap[itemId];
             if (item.type == "SUBSECTION") {

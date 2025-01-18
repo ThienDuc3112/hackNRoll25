@@ -41,6 +41,7 @@ const Editor = () => {
       let targetIndex = e.over.data.current!.sortable.index
       moveSection(e.active.id as string, targetIndex)
     }
+
   }
 
   return (
