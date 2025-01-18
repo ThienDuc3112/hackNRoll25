@@ -9,7 +9,7 @@ const Editor = () => {
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(50);
   // Access your editor state & actions
-  const { editorState, newSection, moveSection } = useEditorAtom();
+  const { editorState, move, newSection, moveSection } = useEditorAtom();
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -48,6 +48,24 @@ const Editor = () => {
       }
       let targetIndex = e.over.data.current!.sortable.index
       moveSection(e.active.id as string, targetIndex)
+    } else if (e.active.data.current?.type === "ITEM") {
+      if (!e.over || !e.over.data.current) {
+        return;
+      }
+      if (e.over.data.current.type === "SECTION") {
+        move(e.active.id as string, e.over.id as string, 0)
+      } else if (e.over.data.current.type === "ITEM") {
+        move(
+          e.active.id as string,
+          e.over.data.current.parentContainerId,
+          e.over.data.current.sortable.index
+        )
+      } else {
+        console.log("WARNING: OVER ITEM DON'T HAVE TYPE")
+      }
+      console.log(e.over)
+    } else {
+      console.log("WARNING: ACTIVE ITEM DON'T HAVE TYPE")
     }
   }
 
