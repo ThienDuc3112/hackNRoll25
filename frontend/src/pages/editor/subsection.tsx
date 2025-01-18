@@ -4,11 +4,7 @@ import { PointType, SubsectionType } from "./types";
 import { useAtomValue } from "jotai";
 import { itemMapAtom } from "./state";
 
-const Field = ({
-  id,
-  label,
-  content,
-}) => {
+const Field = ({ id, label, content }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(label);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -24,9 +20,7 @@ const Field = ({
               className="text-sm p-1 border rounded"
               autoFocus
             />
-            <button className="text-sm text-blue-500">
-              Save
-            </button>
+            <button className="text-sm text-blue-500">Save</button>
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -86,20 +80,21 @@ const Subsection = ({
   id,
   isDropped = false,
   onRemove,
-  subSection
+  subSection,
 }: {
-  id: string,
-  isDropped: boolean,
-  onRemove: (str: string) => void,
-  subSection: SubsectionType,
+  id: string;
+  isDropped: boolean;
+  onRemove: (str: string) => void;
+  subSection: SubsectionType;
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
-  const itemMap = useAtomValue(itemMapAtom)
+  const itemMap = useAtomValue(itemMapAtom);
 
   return (
     <div
-      className={`w-full p-4 mb-4 rounded-lg ${!isDropped ? "bg-white shadow-md cursor-move" : "bg-white shadow-md"
-        }`}
+      className={`w-full p-4 mb-4 rounded-lg ${
+        !isDropped ? "bg-white shadow-md cursor-move" : "bg-white shadow-md"
+      }`}
     >
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-semibold text-lg">{subSection.title}</h3>
@@ -122,9 +117,7 @@ const Subsection = ({
         ))}
       </div>
 
-      <button
-        className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600"
-      >
+      <button className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600">
         <Plus size={16} className="mr-1" /> Add Field
       </button>
 

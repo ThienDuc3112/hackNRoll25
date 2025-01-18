@@ -73,6 +73,7 @@ const ExportHandler = ({ name, metadatas }) => {
               document={<Mydocument name={name} metadatas={metadatas} />}
               fileName="resume.pdf"
             >
+              {/* @ts-expect-error */}
               {({ loading }) => (
                 <Button variant="primary" disabled={loading}>
                   <Download size={16} />
@@ -185,7 +186,7 @@ const Editor = () => {
     if (activeData.type === "item" && overData.type === "section") {
       // e.g. move item from one section to another
       const activeComponentId = activeIdStr.substring(5); // remove "item-"
-      const overSectionId = overId.substring(8);          // remove "section-"
+      const overSectionId = overId.substring(8); // remove "section-"
       move(activeComponentId, overSectionId, activeData.sortable.index);
     } else {
       console.log("Unhandled drag scenario", { activeData, overData });
@@ -226,7 +227,7 @@ const Editor = () => {
                 return (
                   <Subsection
                     key={i}
-                    onRemove={(_: string) => { }}
+                    onRemove={(_: string) => {}}
                     id={`menu-${item.id}`}
                     subSection={item}
                     isDropped={false}
