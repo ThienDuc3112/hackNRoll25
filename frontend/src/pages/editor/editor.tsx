@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { useEditorAtom } from "./state";
+import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
 import { DndContext, DragEndEvent, DragMoveEvent, DragStartEvent } from "@dnd-kit/core";
+import { useSetAtom } from "jotai";
 
 const Editor = () => {
   // Divider state for left & right panes
@@ -25,8 +26,14 @@ const Editor = () => {
     window.addEventListener("mouseup", handleMouseUp);
   };
 
+  const setActive = useSetAtom(activeAtom)
+
   const onDragStart = (e: DragStartEvent) => {
     console.log(e)
+    setActive({
+      type: e.active.data.current!.type,
+      id: e.active.id
+    })
   }
 
   const onDragMove = (e: DragMoveEvent) => {
@@ -34,6 +41,7 @@ const Editor = () => {
   }
 
   const onDragEnd = (e: DragEndEvent) => {
+    setActive(null)
     if (e.active.data.current?.type === "SECTION") {
       if (!e.over || !e.over.data.current) {
         return;
@@ -41,7 +49,6 @@ const Editor = () => {
       let targetIndex = e.over.data.current!.sortable.index
       moveSection(e.active.id as string, targetIndex)
     }
-
   }
 
   return (

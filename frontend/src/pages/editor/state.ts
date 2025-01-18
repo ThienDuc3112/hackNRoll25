@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
 import { EditorStateType, ItemType, PointType, SubsectionType } from "./types";
 import { arrayMove } from "@dnd-kit/sortable";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 export const editorAtom = atom<EditorStateType>({
   menu: ["test", "education", "project"],
@@ -175,3 +176,8 @@ export const useEditorAtom = () => {
     newSection,
   };
 };
+
+export const activeAtom = atom<{
+  type: "SECTION" | "ITEM"
+  id: UniqueIdentifier
+} | null>(null)
