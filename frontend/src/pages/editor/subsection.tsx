@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
+import { PointType, SubsectionType } from "./types";
+import { useAtomValue } from "jotai";
+import { itemMapAtom } from "./state";
 
 const Field = ({
   id,
@@ -81,19 +84,17 @@ const Field = ({
 
 const Subsection = ({
   id,
-  name,
   isDropped = false,
   onRemove,
-  fields,
+  subSection
 }: {
   id: string,
-  name: string,
   isDropped: boolean,
-  onRemove: () => (str: string) => void,
-  fields: { id: number, label: string, content: string }[],
-  onFieldsUpdate: any
+  onRemove: (str: string) => void,
+  subSection: SubsectionType,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
+  const itemMap = useAtomValue(itemMapAtom)
 
   return (
     <div
@@ -101,7 +102,7 @@ const Subsection = ({
         }`}
     >
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-semibold text-lg">{name}</h3>
+        <h3 className="font-semibold text-lg">{subSection.title}</h3>
         <button
           onClick={() => setShowConfirm(true)}
           className="p-1 hover:bg-gray-100 rounded"
@@ -111,12 +112,12 @@ const Subsection = ({
       </div>
 
       <div>
-        {fields.map((field) => (
+        {subSection.items.map((point, i) => (
           <Field
-            key={field.id}
-            id={field.id}
-            label={field.label}
-            content={field.content}
+            key={i}
+            id={`menu-${point}`}
+            label={""}
+            content={(itemMap[point] as PointType).data}
           />
         ))}
       </div>
@@ -144,7 +145,7 @@ const Subsection = ({
               <button
                 className="px-3 py-1 bg-red-500 text-white hover:bg-red-600 rounded"
                 onClick={() => {
-                  onRemove();
+                  //onRemove();
                   setShowConfirm(false);
                 }}
               >

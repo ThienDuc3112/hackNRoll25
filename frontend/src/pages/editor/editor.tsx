@@ -248,13 +248,16 @@ const Editor = () => {
             className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
             style={{ width: `${dividerPosition}%` }}
           >
-            {subsections.map((name) => (
-              <Subsection
-                key={name}
-                name={name}
-                onRemove={() => removeSubsection(name)}
-              />
-            ))}
+            {
+              editorState.menu.map((itemId, i) => {
+                const item = editorState.itemMap[itemId]
+                if (item.type == "SUBSECTION") {
+                  return <Subsection key={i} onRemove={(_: string) => { }} id={`menu-${item.id}`} subSection={item} isDropped={false} />
+                } else {
+                  return <p>Bullet point</p>
+                }
+              })
+            }
             {showNameInput ? (
               <div className="w-full p-4 mb-4 border-2 border-dashed border-gray-300 rounded-lg">
                 <input

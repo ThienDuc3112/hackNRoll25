@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 
-const Button = ({ onClick, children, variant = "primary" }: {
+const Button = ({ onClick, children, variant = "primary", disabled }: {
   onClick: () => void,
   children: ReactNode,
-  variant: "primary" | "secondary" | "outline"
+  variant: "primary" | "secondary" | "outline",
+  disabled: boolean
 }) => {
   const baseStyles =
     "px-4 py-2 rounded-md font-medium transition-colors duration-200 flex items-center gap-2";
@@ -17,6 +18,7 @@ const Button = ({ onClick, children, variant = "primary" }: {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`${baseStyles} ${(variants as unknown as Record<string, string>)[variant]
         }`}
     >

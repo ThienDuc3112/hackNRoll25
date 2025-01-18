@@ -1,21 +1,24 @@
 import { atom, useAtom } from "jotai"
-import { EditorStateType, IdItemType, ItemType, SectionType } from "./types"
+import { EditorStateType, ItemType } from "./types"
 import { arrayMove } from "@dnd-kit/sortable"
 
 export const editorAtom = atom<EditorStateType>({
-  menu: ["test", "skill", "education"],
+  menu: ["test", "education"],
   sections: [
     {
       id: "default",
       displayName: "Default Section",
-      items: ["test2"]
+      items: ["skill"]
     },
   ],
   itemMap: {
     test: {
-      type: "POINT",
-      data: "Test point 1",
-      id: "test"
+      type: "SUBSECTION",
+      id: "test",
+      title: "Test subsection",
+      items: ["test2"],
+      description: "This is a test subsection",
+      timeRange: "beginning of time - now"
     },
     "test2": {
       type: "POINT",

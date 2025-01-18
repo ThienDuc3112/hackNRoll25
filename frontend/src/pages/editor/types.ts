@@ -12,7 +12,7 @@ export type SubsectionType = {
   title: string,
   timeRange: string,
   description: string,
-  children: PointType[]
+  items: IdItemType[]
 }
 
 export type ItemType = PointType | SubsectionType
