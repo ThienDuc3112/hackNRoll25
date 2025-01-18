@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: "bold",
   },
-  contactInfo: {
+  contacts: {
     flexDirection: "row",
     justifyContent: "center",
     fontSize: 10,
@@ -52,29 +52,29 @@ const styles = StyleSheet.create({
   },
 });
 
-const Mydocument = ({ name }) => (
+const Mydocument = ({ name, metadatas }) => (
   <Document>
     <Page size="A4" style={styles.page}>
-      {/* Header */}
+      {/* Contact */}
       <View style={styles.header}>
         <Text style={styles.name}>{name}</Text>
-        <View style={styles.contactInfo}>
-          {/* {contactFields.map((field, index) => (
+        <View style={styles.contacts}>
+          {metadatas.map((field, index) => (
             <React.Fragment key={field.id}>
               <Text>{field.value}</Text>
-              {index < contactFields.length - 1 && (
+              {index < metadatas.length - 1 && (
                 <Text style={styles.divider}>•</Text>
               )}
             </React.Fragment>
-          ))} */}
+          ))}
         </View>
       </View>
 
-      {/* Components */}
-      {/* {components.map((component, index) => (
+      {/* Sections */}
+      {/* {sections.map((section, index) => (
         <View key={index} style={styles.section}>
-          <Text style={styles.sectionTitle}>{component.name}</Text>
-          {component.fields.map((field) => (
+          <Text style={styles.sectionTitle}>{section.name}</Text>
+          {section.fields.map((field) => (
             <View key={field.id} style={styles.field}>
               <Text style={styles.fieldLabel}>{field.label}</Text>
               <Text style={styles.fieldContent}>{field.content}</Text>
