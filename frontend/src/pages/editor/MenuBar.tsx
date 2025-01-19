@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { IdItemType, SubsectionType } from "./types";
-import { useEditorAtom } from "./state";
+import { itemMapAtom, useEditorAtom } from "./state";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MenuItemView } from "./MenuItemView";
+import { useAtomValue } from "jotai";
 
 type MenuBarProps = {
   dividerPosition: number;
@@ -11,6 +12,17 @@ type MenuBarProps = {
 
 export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   // For adding new subsections from the menu
+  const itemMap = useAtomValue(itemMapAtom)
+  const [option, setOption] = useState<"all" | "sub" | "point">("all")
+  const filteredMenu = useMemo(() => {
+    if (option == "sub") {
+      return menu.filter(itemId => itemMap[itemId]?.type === "SUBSECTION")
+    } else if (option == "point") {
+      return menu.filter(itemId => itemMap[itemId]?.type === "POINT")
+    } else {
+      return menu
+    }
+  }, [menu, option])
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
   const [newSubsectionSubTitle, setNewSubsectionSubTitle] = useState("");
@@ -20,7 +32,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   const { newBulletPoint, newSubSection, deleteItem } = useEditorAtom();
   const [newGBulletPointName, setNewGBulletPointName] = useState("");
 
-  const items = useMemo(() => menu.map(val => `MENU-${val}`), [menu])
+  const items = useMemo(() => filteredMenu.map(val => `MENU-${val}`), [filteredMenu])
 
   const addNewSubsection = (subSection: SubsectionType) => {
     newSubSection(subSection);
@@ -31,9 +43,27 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
       className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
       style={{ width: `${dividerPosition}%` }}
     >
+      <div
+        className="bg-white w-full h-40 flex-col flex justify-around my-2 align-middle"
+      >
+        <span className="text-center">Filtered Option</span>
+        <div
+          className="bg-white w-full flex-row flex justify-around my-2 align-middle"
+        >
+          <button
+            className={`p-2 ${option === "all" ? "bg-blue-500" : "bg-gray-200"}`}
+            onClick={() => setOption("all")}>All</button>
+          <button
+            className={`p-2 ${option === "point" ? "bg-blue-500" : "bg-gray-200"}`}
+            onClick={() => setOption("point")}>Bullet points</button>
+          <button
+            className={`p-2 ${option === "sub" ? "bg-blue-500" : "bg-gray-200"}`}
+            onClick={() => setOption("sub")}>Subsections</button>
+        </div>
+      </div>
       {/** Render the items from the menu */}
       <SortableContext strategy={verticalListSortingStrategy} items={items}>
-        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />)}
+        {filteredMenu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />)}
       </SortableContext>
 
       {/** "Add Subsection" UI */}
