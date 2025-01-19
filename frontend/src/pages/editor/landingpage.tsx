@@ -1,4 +1,5 @@
 import { ArrowRight, FileText, Layout, Workflow, Download } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const Feature = ({ icon: Icon, title, description }) => (
   <div className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow">
@@ -13,6 +14,7 @@ const Feature = ({ icon: Icon, title, description }) => (
 
 
 const LandingPage = () => {
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
@@ -38,7 +40,9 @@ const LandingPage = () => {
               >
                 Templates
               </a>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button onClick={() => {
+                navigate("/editor")
+              }} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                 Get Started
               </button>
             </nav>
