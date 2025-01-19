@@ -1,26 +1,51 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import React, { useState } from "react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
 
   const validateForm = () => {
-    const newErrors = { email: '', password: '' };
+    const newErrors = {
+      email: "",
+      password: "",
+    };
     let isValid = true;
 
-    if (!email) {
-      newErrors.email = 'Email is required';
+    if (!formData.email) {
+      newErrors.email = "Email is required";
       isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
       isValid = false;
     }
 
-    if (!password) {
-      newErrors.password = 'Password is required';
+    if (!formData.password) {
+      newErrors.password = "Password is required";
       isValid = false;
     }
 
@@ -31,29 +56,37 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Handle login logic here
-      console.log('Login submitted:', { email, password });
+      // Add your login logic here
+      console.log("Login attempted with:", formData);
+      navigate("/editor"); // Navigate to editor page after successful login
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4">
-      <div className="relative w-full max-w-md">
-        {/* Background decorations */}
-        <div className="absolute -z-10 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 w-48 h-48 rounded-full -top-12 -left-12 animate-blob" />
-        <div className="absolute -z-10 blur-3xl opacity-30 bg-gradient-to-r from-purple-400 to-blue-400 w-48 h-48 rounded-full -bottom-12 -right-12 animate-blob animate-delay-2000" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4">
+      {/* Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
+        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-40 left-20 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
+      </div>
+
+      <div className="w-full max-w-md z-10">
+        {/* Logo */}
+        <div 
+          onClick={() => navigate('/')} 
+          className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 cursor-pointer"
+        >
+          RBuild
+        </div>
 
         {/* Card */}
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-lg shadow-xl">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-              Welcome Back
-            </h2>
-            <p className="text-gray-600 mt-2">Sign in to continue building your resume</p>
-          </div>
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
+          <h2 className="text-2xl font-bold text-center mb-2">Welcome Back</h2>
+          <p className="text-gray-600 text-center mb-6">
+            Sign in to continue building your resume
+          </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
@@ -61,12 +94,15 @@ const Login = () => {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-2 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                   placeholder="Enter your email"
                 />
               </div>
@@ -81,12 +117,15 @@ const Login = () => {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-12 py-2 border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                   placeholder="Enter your password"
                 />
                 <button
@@ -95,46 +134,44 @@ const Login = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="h-5 w-5" />
                   )}
                 </button>
               </div>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password}</p>
               )}
-            </div>
-
-            {/* Forgot Password */}
-            <div className="text-right">
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Forgot password?
-              </a>
+              <div className="flex justify-end mt-2">
+                <a
+                  href="#"
+                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                >
+                  Forgot password?
+                </a>
+              </div>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:-translate-y-0.5"
             >
               Sign In
             </button>
-
-            {/* Sign Up Link */}
-            <p className="text-center text-gray-600 text-sm">
-              Don't have an account?{" "}
-              <a
-                href="/signup"
-                className="text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Sign up
-              </a>
-            </p>
           </form>
+
+          {/* Sign Up Link */}
+          <p className="mt-6 text-center text-gray-600">
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/signup")}
+              className="text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              Sign up
+            </button>
+          </p>
         </div>
       </div>
     </div>

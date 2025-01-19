@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import React, { useState } from "react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+export const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,6 +17,21 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear error when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
 
   const validateForm = () => {
     const newErrors = {
@@ -58,39 +75,39 @@ const Signup = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Handle signup logic here
-      console.log("Signup submitted:", formData);
+      // Add your signup logic here
+      console.log("Signup attempted with:", formData);
+      navigate("/editor"); // Navigate to editor page after successful signup
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4">
-      <div className="relative w-full max-w-md">
-        {/* Background decorations */}
-        <div className="absolute -z-10 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 w-48 h-48 rounded-full -top-12 -left-12 animate-blob" />
-        <div className="absolute -z-10 blur-3xl opacity-30 bg-gradient-to-r from-purple-400 to-blue-400 w-48 h-48 rounded-full -bottom-12 -right-12 animate-blob animate-delay-2000" />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4">
+      {/* Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
+        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-40 left-20 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
+      </div>
+
+      <div className="w-full max-w-md z-10">
+        {/* Logo */}
+        <div
+          onClick={() => navigate("/")}
+          className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 cursor-pointer"
+        >
+          RBuild
+        </div>
 
         {/* Card */}
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-lg shadow-xl">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-              Create Account
-            </h2>
-            <p className="text-gray-600 mt-2">
-              Join RBuild to create your professional resume
-            </p>
-          </div>
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
+          <h2 className="text-2xl font-bold text-center mb-2">
+            Create Account
+          </h2>
+          <p className="text-gray-600 text-center mb-6">
+            Join RBuild to create your professional resume
+          </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
@@ -102,7 +119,9 @@ const Signup = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className={`w-full px-4 py-2 border ${
+                  errors.name ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                 placeholder="Enter your full name"
               />
               {errors.name && (
@@ -120,7 +139,9 @@ const Signup = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className={`w-full px-4 py-2 border ${
+                  errors.email ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -139,7 +160,9 @@ const Signup = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className={`w-full px-4 py-2 border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                   placeholder="Create a password"
                 />
                 <button
@@ -148,9 +171,9 @@ const Signup = () => {
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="h-5 w-5" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="h-5 w-5" />
                   )}
                 </button>
               </div>
@@ -169,7 +192,9 @@ const Signup = () => {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                className={`w-full px-4 py-2 border ${
+                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors`}
                 placeholder="Confirm your password"
               />
               {errors.confirmPassword && (
@@ -182,25 +207,26 @@ const Signup = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-0.5"
+              className="w-full py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:-translate-y-0.5"
             >
               Sign Up
             </button>
-
-            {/* Login Link */}
-            <p className="text-center text-gray-600 text-sm">
-              Already have an account?{" "}
-              <a
-                href="/login"
-                className="text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Sign in
-              </a>
-            </p>
           </form>
+
+          {/* Login Link */}
+          <p className="mt-6 text-center text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              Sign in
+            </button>
+          </p>
         </div>
       </div>
     </div>
   );
 };
+
 export default Signup;
