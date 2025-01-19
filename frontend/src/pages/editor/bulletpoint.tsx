@@ -10,6 +10,7 @@ type BulletPointProps = {
 };
 
 const BulletPoint = ({ point, onDelete, allowEdit = false }: BulletPointProps) => {
+  if (point === undefined) return null;
   const [showConfirm, setShowConfirm] = useState(false);
   const [showEdit, setShowEdit] = useState(false)
   const [editting, setEditting] = useState(false)
