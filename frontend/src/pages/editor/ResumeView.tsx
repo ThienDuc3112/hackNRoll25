@@ -102,15 +102,15 @@ export const ResumeView = ({
             {/** Contact Info */}
             <div className="flex flex-wrap items-center justify-center gap-2 text-gray-600">
               {metadatas.map((field, index) => (
-                <div key={field.id}>
-                  {index > 0 && <span>-</span>}
+                <div key={field.id} className="flex items-center">
                   <ContactInfo
                     value={field.value}
-                    onChange={(value: string) =>
-                      updateMetadatas(field.id, value)
-                    }
+                    onChange={(value: string) => updateMetadatas(field.id, value)}
                     onRemove={() => removeMetadatas(field.id)}
                   />
+                  {index < metadatas.length - 1 && (
+                    <span className="mx-2">-</span>
+                  )}
                 </div>
               ))}
               {metadatas.length < 5 && (
