@@ -100,25 +100,28 @@ export const ResumeView = ({
             />
 
             {/** Contact Info */}
-            <div className="flex flex-wrap items-center justify-center gap-2 text-gray-600">
-              {metadatas.map((field, index) => (
-                <div key={field.id} className="flex items-center">
-                  <ContactInfo
-                    value={field.value}
-                    onChange={(value: string) => updateMetadatas(field.id, value)}
-                    onRemove={() => removeMetadatas(field.id)}
-                  />
-                  {index < metadatas.length - 1 && (
-                    <span className="mx-2">-</span>
-                  )}
-                </div>
-              ))}
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-3">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {metadatas.map((field, index) => (
+                  <div key={field.id} className="flex items-center">
+                    <ContactInfo
+                      value={field.value}
+                      onChange={(value: string) => updateMetadatas(field.id, value)}
+                      onRemove={() => removeMetadatas(field.id)}
+                      className="min-w-[120px]" // Ensure minimum width for input
+                    />
+                    {index < metadatas.length - 1 && (
+                      <span className="mx-2 text-gray-400">-</span>
+                    )}
+                  </div>
+                ))}
+              </div>
               {metadatas.length < 5 && (
                 <button
                   onClick={addMetadatas}
-                  className="text-blue-500 hover:text-blue-600"
+                  className="text-blue-500 hover:text-blue-600 ml-2 p-1 rounded-full hover:bg-blue-50"
                 >
-                  <Plus size={12} />
+                  <Plus size={14} />
                 </button>
               )}
             </div>
