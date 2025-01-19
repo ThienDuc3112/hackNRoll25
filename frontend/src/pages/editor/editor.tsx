@@ -157,7 +157,6 @@ const Editor = () => {
         {/** ==================== LEFT SIDEBAR ==================== */}
         <MenuBar
           dividerPosition={dividerPosition}
-          itemMap={editorState.itemMap}
           menu={editorState.menu}
         />
 
@@ -181,7 +180,7 @@ const Editor = () => {
               return editorState.sections.find(val => val.id === activeId.id)
             })()!} />}
             {activeId && activeId.type === "ITEM" && <ItemView parentContainerId="" itemId={activeId.id as string} />}
-            {activeId && activeId.type === "MENU_ITEM" && <MenuItemView itemId={(activeId.id as string).substring(5)} />}
+            {activeId && activeId.type === "MENU_ITEM" && <MenuItemView onDelete={(_) => { }} itemId={(activeId.id as string).substring(5)} />}
           </DragOverlay>,
           document.body
         )

@@ -1,4 +1,4 @@
-import { ArrowRight, FileText, Layout, Workflow, Download } from "lucide-react";
+import { ArrowRight, FileText, Layout, Workflow } from "lucide-react";
 import { useNavigate } from "react-router";
 
 const Feature = ({ icon: Icon, title, description }) => (

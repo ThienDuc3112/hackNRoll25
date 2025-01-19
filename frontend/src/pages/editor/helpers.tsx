@@ -1,10 +1,10 @@
 // helpers.tsx
 import { useState } from "react";
-import { X, Download, Plus } from "lucide-react";
+import { X, Download } from "lucide-react";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import Button from "./button";
 import Mydocument from "./mydocument";
-import { IdItemType, SectionType } from "./types";
+import { IdItemType } from "./types";
 
 /** ContactInfo is the small input + "x" button to remove a piece of contact info. */
 export const ContactInfo = ({
@@ -92,7 +92,7 @@ export const ExportHandler = ({
               */}
               {/* @ts-expect-error */}
               {({ loading }: { loading: boolean }) => (
-                <Button variant="primary" disabled={loading} onClick={() => {}}>
+                <Button variant="primary" disabled={loading} onClick={() => { }}>
                   <Download size={16} />
                   {loading ? "Preparing..." : "Download PDF"}
                 </Button>

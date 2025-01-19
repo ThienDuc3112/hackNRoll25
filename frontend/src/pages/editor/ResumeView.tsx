@@ -50,7 +50,7 @@ export const ResumeView = ({
     >
       {/** ======= CONTROL BAR ======= */}
       <div className="flex items-center gap-4 p-2 bg-white border-b">
-        <ExportHandler name={name} metadatas={metadatas} sections={sections}/>
+        <ExportHandler name={name} metadatas={metadatas} sections={sections} />
         <input
           type="text"
           value={newSectionName}
@@ -108,7 +108,6 @@ export const ResumeView = ({
                       value={field.value}
                       onChange={(value: string) => updateMetadatas(field.id, value)}
                       onRemove={() => removeMetadatas(field.id)}
-                      className="min-w-[120px]" // Ensure minimum width for input
                     />
                     {index < metadatas.length - 1 && (
                       <span className="mx-2 text-gray-400">-</span>

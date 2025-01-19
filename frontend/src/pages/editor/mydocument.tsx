@@ -71,11 +71,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 1.4,
   },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: "bold",
-    fontFamily: "Times-Bold",
-  },
   sectionTime: {
     fontSize: 11,
     fontStyle: "italic",
