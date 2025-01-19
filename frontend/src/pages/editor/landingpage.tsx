@@ -145,7 +145,7 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
               <img
-                src=""
+                src="https://myresumestar.com/wp-content/uploads/2022/07/PR10.png"
                 alt="Template 1"
                 className="w-full"
               />
@@ -156,7 +156,7 @@ const LandingPage = () => {
             </div>
             <div className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
               <img
-                src=""
+                src="https://www.resumehelp.com/wp-content/uploads/2023/09/Harvard-Resume-Template-Example.svg"
                 alt="Template 2"
                 className="w-full"
               />
@@ -167,7 +167,7 @@ const LandingPage = () => {
             </div>
             <div className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
               <img
-                src=""
+                src="https://gdoc.io/uploads/harvard-resume-free-google-docs-template-t.jpg"
                 alt="Template 3"
                 className="w-full"
               />
