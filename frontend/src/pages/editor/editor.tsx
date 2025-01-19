@@ -11,7 +11,7 @@ import { MenuItemView } from "./MenuItemView";
 
 const Editor = () => {
   // Divider state for left & right panes
-  const [dividerPosition, setDividerPosition] = useState(50);
+  const [dividerPosition, setDividerPosition] = useState(40);
   // Access your editor state & actions
   const { editorState, move, newSection, moveSection, filterItem, moveMenuItem } = useEditorAtom();
 
