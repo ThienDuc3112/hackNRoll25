@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
-import { DndContext, DragCancelEvent, DragEndEvent, DragMoveEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { useAtom } from "jotai";
 import { createPortal } from "react-dom";
 import { Section } from "./section";
@@ -13,7 +13,7 @@ const Editor = () => {
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(50);
   // Access your editor state & actions
-  const { editorState, move, newSection, moveSection, filterItem, addItemToSection, moveMenuItem } = useEditorAtom();
+  const { editorState, move, newSection, moveSection, filterItem, moveMenuItem } = useEditorAtom();
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -39,8 +39,43 @@ const Editor = () => {
     })
   }
 
-  const onDragMove = (e: DragMoveEvent) => {
+  const onDragOver = (e: DragOverEvent) => {
+    console.log("onDragOver called", e.over, e.active)
 
+    if (!e.over || !e.over.data.current) {
+      return;
+    }
+
+    if (e.active.data.current?.type === "ITEM") {
+      // Drag over section
+      if (e.over.data.current.type === "SECTION") {
+        // 1.1 Over Section
+        move(e.active.id as string, e.over.id as string, 0)
+
+      } else if (e.over.data.current.type === "ITEM") {
+        // 1.2 Over Item
+        move(
+          e.active.id as string,
+          e.over.data.current.parentContainerId,
+          e.over.data.current.sortable.index
+        )
+      }
+    } else if (e.active.data.current?.type === "MENU_ITEM") {
+      const activeId = (e.active.id as string).substring(5)
+      if (e.over.data.current.type === "SECTION") {
+        // 3.1 Over Section
+        move(activeId, e.over.id as string, 0)
+      } else if (e.over.data.current.type === "ITEM") {
+        // 3.2 Over Item
+        move(
+          activeId,
+          e.over.data.current.parentContainerId,
+          e.over.data.current.sortable.index
+        )
+      } else {
+        filterItem(activeId)
+      }
+    }
   }
 
   const onDragEnd = (e: DragEndEvent) => {
@@ -79,6 +114,7 @@ const Editor = () => {
         console.log("WARNING: OVER ITEM DON'T HAVE TYPE")
       }
       console.log(e.over)
+
     } else if (e.active.data.current?.type === "MENU_ITEM") {
       // 3, Menu Item Dragging
       if (!e.over || !e.over.data.current) {
@@ -87,10 +123,10 @@ const Editor = () => {
       const activeId = (e.active.id as string).substring(5)
       if (e.over.data.current.type === "SECTION") {
         // 3.1 Over Section
-        addItemToSection(activeId, e.over.id as string)
+        move(activeId, e.over.id as string, 0)
       } else if (e.over.data.current.type === "ITEM") {
         // 3.2 Over Item
-        addItemToSection(
+        move(
           activeId,
           e.over.data.current.parentContainerId,
           e.over.data.current.sortable.index
@@ -114,8 +150,8 @@ const Editor = () => {
   return (
     <DndContext
       onDragStart={onDragStart}
-      onDragMove={onDragMove}
       onDragEnd={onDragEnd}
+      onDragOver={onDragOver}
     >
       <div className="fixed inset-0 flex w-full overflow-hidden">
         {/** ==================== LEFT SIDEBAR ==================== */}

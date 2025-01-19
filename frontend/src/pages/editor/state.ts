@@ -181,28 +181,6 @@ export const useEditorAtom = () => {
     }))
   }
 
-  const addItemToSection = (itemId: string, sectionId: string, targetIndex?: number) => {
-    setEditorState(prev => {
-      if (!prev.itemMap[itemId]) return prev;
-      const newState = { ...prev }
-
-      newState.sections = newState.sections.map(section => {
-        const newSection = { ...section }
-        newSection.items = newSection.items.filter(val => val !== itemId)
-        if (newSection.id === sectionId) {
-          if (targetIndex !== undefined) {
-            newSection.items.splice(targetIndex, 0, itemId)
-          } else {
-            newSection.items = [...newSection.items, itemId]
-          }
-        }
-        return newSection
-      })
-
-      return newState
-    })
-  }
-
   const moveMenuItem = (activeMItem: string, targetIndex: number) => {
     setEditorState(prev => {
       const index = prev.menu.findIndex(val => val === activeMItem)
@@ -224,7 +202,6 @@ export const useEditorAtom = () => {
     addPointToSubSection,
     newSection,
     filterItem,
-    addItemToSection,
   };
 };
 
