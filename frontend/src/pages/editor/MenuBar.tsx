@@ -11,11 +11,7 @@ type MenuBarProps = {
   itemMap: Record<string, ItemType>;
 };
 
-export const MenuBar = ({
-  dividerPosition,
-  menu,
-  itemMap,
-}: MenuBarProps) => {
+export const MenuBar = ({ dividerPosition, menu, itemMap }: MenuBarProps) => {
   // For adding new subsections from the menu
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
@@ -40,16 +36,13 @@ export const MenuBar = ({
         const item = itemMap[itemId];
         if (item.type === "SUBSECTION") {
           // SUBSECTION DISPLAY IN MENU ==================
-          return (
-            <Subsection
-              key={i}
-              subSection={item}
-            />
-          );
+          return <Subsection key={i} subSection={item} />;
         } else {
           // BULLETPOINT DISPLAY IN MENU ==================
           return (
-            <BulletPoint key={i} point={item} />
+            <div className="bg-white p-4 rounded-lg shadow-md w-full mb-3 hover:shadow-lg transition-shadow">
+              <BulletPoint key={i} point={item} />
+            </div>
           );
         }
       })}
@@ -142,9 +135,9 @@ export const MenuBar = ({
       ) : (
         <button
           onClick={() => setGBulletInput(true)}
-          className="mt-2 flex items-center text-sm text-blue-500 hover:text-blue-600"
+          className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600"
         >
-          <Plus size={16} className="mr-1" /> Add Bullet Point
+          + Add Bullet Point
         </button>
       )}
     </div>

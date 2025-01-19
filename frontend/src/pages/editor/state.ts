@@ -1,6 +1,7 @@
 import { atom, useAtom } from "jotai";
-import { EditorStateType, ItemType, PointType, SubsectionType } from "./types";
+import { EditorStateType, IdItemType, ItemType, PointType, SubsectionType } from "./types";
 import { arrayMove } from "@dnd-kit/sortable";
+import { Copy } from "lucide-react";
 
 export const editorAtom = atom<EditorStateType>({
   menu: ["test", "education", "project"],
@@ -145,6 +146,17 @@ export const useEditorAtom = () => {
     });
   };
 
+  const deleteSubSection = (sub_id: IdItemType) => {
+    setEditorState((prev) => {
+      const newState = {...prev};
+      newState.menu = newState.menu.filter((id) => id !== sub_id);
+      newState.itemMap = {...newState.itemMap}
+      delete newState.itemMap[sub_id]
+      console.log(newState)
+      return newState
+    })
+  }
+
   const addPointToSubSection = (pointId: string, subSectionId: string) => {
     setEditorState((prev) => {
       const subSection = prev.itemMap[subSectionId];
@@ -173,5 +185,6 @@ export const useEditorAtom = () => {
     newSubSection,
     addPointToSubSection,
     newSection,
+    deleteSubSection
   };
 };
