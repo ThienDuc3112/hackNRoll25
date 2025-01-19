@@ -32,7 +32,7 @@ export const MenuItemView = ({ itemId, onDelete }: { itemId: IdItemType, onDelet
   return <div
     ref={setNodeRef}
     style={style}
-    className="flex flex-row justify-center align-middle"
+    className="flex flex-row justify-start align-middle"
   >
     <div
       className="h-full pb-4"
