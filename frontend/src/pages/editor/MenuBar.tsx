@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { IdItemType, SubsectionType } from "./types";
 import { itemMapAtom, useEditorAtom } from "./state";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { MenuItemView } from "./MenuItemView";
 import { useAtomValue } from "jotai";
 
@@ -12,17 +15,17 @@ type MenuBarProps = {
 
 export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   // For adding new subsections from the menu
-  const itemMap = useAtomValue(itemMapAtom)
-  const [option, setOption] = useState<"all" | "sub" | "point">("all")
+  const itemMap = useAtomValue(itemMapAtom);
+  const [option, setOption] = useState<"all" | "sub" | "point">("all");
   const filteredMenu = useMemo(() => {
     if (option == "sub") {
-      return menu.filter(itemId => itemMap[itemId]?.type === "SUBSECTION")
+      return menu.filter((itemId) => itemMap[itemId]?.type === "SUBSECTION");
     } else if (option == "point") {
-      return menu.filter(itemId => itemMap[itemId]?.type === "POINT")
+      return menu.filter((itemId) => itemMap[itemId]?.type === "POINT");
     } else {
-      return menu
+      return menu;
     }
-  }, [menu, option])
+  }, [menu, option]);
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
   const [newSubsectionSubTitle, setNewSubsectionSubTitle] = useState("");
@@ -32,7 +35,10 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   const { newBulletPoint, newSubSection, deleteItem } = useEditorAtom();
   const [newGBulletPointName, setNewGBulletPointName] = useState("");
 
-  const items = useMemo(() => filteredMenu.map(val => `MENU-${val}`), [filteredMenu])
+  const items = useMemo(
+    () => filteredMenu.map((val) => `MENU-${val}`),
+    [filteredMenu]
+  );
 
   const addNewSubsection = (subSection: SubsectionType) => {
     newSubSection(subSection);
@@ -43,27 +49,51 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
       className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
       style={{ width: `${dividerPosition}%` }}
     >
-      <div
-        className="bg-white w-full h-40 flex-col flex justify-around my-2 align-middle"
-      >
-        <span className="text-center">Filtered Option</span>
-        <div
-          className="bg-white w-full flex-row flex justify-around my-2 align-middle"
-        >
-          <button
-            className={`p-2 ${option === "all" ? "bg-blue-500" : "bg-gray-200"}`}
-            onClick={() => setOption("all")}>All</button>
-          <button
-            className={`p-2 ${option === "point" ? "bg-blue-500" : "bg-gray-200"}`}
-            onClick={() => setOption("point")}>Bullet points</button>
-          <button
-            className={`p-2 ${option === "sub" ? "bg-blue-500" : "bg-gray-200"}`}
-            onClick={() => setOption("sub")}>Subsections</button>
-        </div>
-      </div>
+<div className="bg-white rounded-lg shadow-md p-4 mb-6">
+  <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+    Filter Components
+  </h3>
+  
+  <div className="flex justify-between items-center gap-2">
+    <button
+      onClick={() => setOption("all")}
+      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+        option === "all"
+          ? "bg-blue-600 text-white shadow-md"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+      }`}
+    >
+      All
+    </button>
+    
+    <button
+      onClick={() => setOption("point")}
+      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+        option === "point"
+          ? "bg-blue-600 text-white shadow-md"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+      }`}
+    >
+      Points
+    </button>
+    
+    <button
+      onClick={() => setOption("sub")}
+      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+        option === "sub"
+          ? "bg-blue-600 text-white shadow-md"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+      }`}
+    >
+      Sections
+    </button>
+  </div>
+</div>
       {/** Render the items from the menu */}
       <SortableContext strategy={verticalListSortingStrategy} items={items}>
-        {filteredMenu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />)}
+        {filteredMenu.map((itemId) => (
+          <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />
+        ))}
       </SortableContext>
 
       {/** "Add Subsection" UI */}
@@ -146,7 +176,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
             onClick={() => {
               newBulletPoint(newGBulletPointName);
               setNewGBulletPointName("");
-              setGBulletInput(false)
+              setGBulletInput(false);
             }}
           >
             Add
@@ -154,7 +184,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
           <button
             onClick={() => {
               setNewGBulletPointName("");
-              setGBulletInput(false)
+              setGBulletInput(false);
             }}
           >
             Cancel
