@@ -39,6 +39,10 @@ export const ResumeView = ({
     );
   };
 
+  // const removeSection = (id) => {
+  //   setSections(sectionls.filter((field) => field.id !== id));
+  // }
+
   return (
     <div
       className="flex overflow-y-auto flex-col h-full bg-gray-100"
@@ -46,7 +50,7 @@ export const ResumeView = ({
     >
       {/** ======= CONTROL BAR ======= */}
       <div className="flex items-center gap-4 p-2 bg-white border-b">
-        <ExportHandler name={name} metadatas={metadatas} />
+        <ExportHandler name={name} metadatas={metadatas} sections={sections}/>
         <input
           type="text"
           value={newSectionName}
@@ -57,7 +61,8 @@ export const ResumeView = ({
         <Button
           onClick={() => {
             if (newSectionName === "") return;
-            newSection(newSectionName, newSectionName);
+            //create section at backend then fetch to get id in frontend
+            newSection("a", newSectionName);
             setNewSectionName("");
           }}
         >

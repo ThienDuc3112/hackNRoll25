@@ -4,6 +4,7 @@ import { X, Download, Plus } from "lucide-react";
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import Button from "./button";
 import Mydocument from "./mydocument";
+import { IdItemType, SectionType } from "./types";
 
 /** ContactInfo is the small input + "x" button to remove a piece of contact info. */
 export const ContactInfo = ({
@@ -44,9 +45,11 @@ export const ContactInfo = ({
 export const ExportHandler = ({
   name,
   metadatas,
+  sections,
 }: {
   name: string;
   metadatas: { id: number; value: string }[];
+  sections: { id: string; displayName: string; items: IdItemType[] }[];
 }) => {
   const [showPreview, setShowPreview] = useState(false);
 
@@ -65,12 +68,22 @@ export const ExportHandler = ({
           </div>
           <div className="flex-1">
             <PDFViewer width="100%" height="100%">
-              <Mydocument name={name} metadatas={metadatas} />
+              <Mydocument
+                name={name}
+                metadatas={metadatas}
+                sections={sections}
+              />
             </PDFViewer>
           </div>
           <div className="mt-4 flex justify-end">
             <PDFDownloadLink
-              document={<Mydocument name={name} metadatas={metadatas} />}
+              document={
+                <Mydocument
+                  name={name}
+                  metadatas={metadatas}
+                  sections={sections}
+                />
+              }
               fileName="resume.pdf"
             >
               {/* 
@@ -79,7 +92,7 @@ export const ExportHandler = ({
               */}
               {/* @ts-expect-error */}
               {({ loading }: { loading: boolean }) => (
-                <Button variant="primary" disabled={loading} onClick={() => { }}>
+                <Button variant="primary" disabled={loading} onClick={() => {}}>
                   <Download size={16} />
                   {loading ? "Preparing..." : "Download PDF"}
                 </Button>
@@ -92,7 +105,11 @@ export const ExportHandler = ({
   }
 
   return (
-    <Button variant="primary" disabled={false} onClick={() => setShowPreview(true)}>
+    <Button
+      variant="primary"
+      disabled={false}
+      onClick={() => setShowPreview(true)}
+    >
       <Download size={16} />
       Export
     </Button>
