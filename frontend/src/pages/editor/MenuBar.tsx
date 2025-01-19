@@ -1,17 +1,15 @@
 import { useMemo, useState } from "react";
-import { IdItemType, ItemType, SubsectionType } from "./types";
+import { IdItemType, SubsectionType } from "./types";
 import { useEditorAtom } from "./state";
-import { Plus } from "lucide-react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { MenuItemView } from "./MenuItemView";
 
 type MenuBarProps = {
   dividerPosition: number;
   menu: IdItemType[];
-  itemMap: Record<string, ItemType>;
 };
 
-export const MenuBar = ({ dividerPosition, menu, itemMap }: MenuBarProps) => {
+export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   // For adding new subsections from the menu
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
@@ -19,7 +17,7 @@ export const MenuBar = ({ dividerPosition, menu, itemMap }: MenuBarProps) => {
   const [timerange, setTimerange] = useState("");
 
   const [showGBulletInput, setGBulletInput] = useState(false);
-  const { newBulletPoint, newSubSection } = useEditorAtom();
+  const { newBulletPoint, newSubSection, deleteItem } = useEditorAtom();
   const [newGBulletPointName, setNewGBulletPointName] = useState("");
 
   const items = useMemo(() => menu.map(val => `MENU-${val}`), [menu])
@@ -35,7 +33,7 @@ export const MenuBar = ({ dividerPosition, menu, itemMap }: MenuBarProps) => {
     >
       {/** Render the items from the menu */}
       <SortableContext strategy={verticalListSortingStrategy} items={items}>
-        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} />)}
+        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />)}
       </SortableContext>
 
       {/** "Add Subsection" UI */}
@@ -118,9 +116,18 @@ export const MenuBar = ({ dividerPosition, menu, itemMap }: MenuBarProps) => {
             onClick={() => {
               newBulletPoint(newGBulletPointName);
               setNewGBulletPointName("");
+              setGBulletInput(false)
             }}
           >
             Add
+          </button>
+          <button
+            onClick={() => {
+              setNewGBulletPointName("");
+              setGBulletInput(false)
+            }}
+          >
+            Cancel
           </button>
         </div>
       ) : (

@@ -5,8 +5,9 @@ import { useAtomValue } from "jotai";
 import { itemMapAtom } from "./state";
 import Subsection from "./subsection";
 import BulletPoint from "./bulletpoint";
+import { GripVertical } from "lucide-react";
 
-export const MenuItemView = ({ itemId }: { itemId: IdItemType }) => {
+export const MenuItemView = ({ itemId, onDelete }: { itemId: IdItemType, onDelete: (itemId: string) => void }) => {
   const itemMap = useAtomValue(itemMapAtom)
 
   const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -23,8 +24,6 @@ export const MenuItemView = ({ itemId }: { itemId: IdItemType }) => {
   if (isDragging) {
     return <div className="h-[50px] bg-gray-50"
       ref={setNodeRef}
-      {...attributes}
-      {...listeners}
       style={{ ...style, opacity: 1 }}
     />
   }
@@ -33,14 +32,21 @@ export const MenuItemView = ({ itemId }: { itemId: IdItemType }) => {
   return <div
     ref={setNodeRef}
     style={style}
-    {...attributes}
-    {...listeners}
+    className="flex flex-row justify-center align-middle"
   >
+    <div
+      className="h-full pb-4"
+    >
+      <div className="bg-gray-50 w-full h-full flex flex-col align-middle justify-center "
+        {...attributes}
+        {...listeners}
+      ><GripVertical /></div>
+    </div>
     {
       item.type === "SUBSECTION" ?
-        <Subsection key={item.id} allowEdit={true} subSection={item} />
+        <Subsection key={item.id} subSection={item} allowEdit onDelete={onDelete} />
         :
-        <BulletPoint key={item.id} point={item} />
+        <BulletPoint key={item.id} point={item} allowEdit onDelete={onDelete} />
     }
   </div>
 }

@@ -7,10 +7,12 @@ import BulletPoint from "./bulletpoint";
 
 const Subsection = ({
   subSection,
-  allowEdit = true,
+  allowEdit = false,
+  onDelete
 }: {
   subSection: SubsectionType;
   allowEdit?: boolean;
+  onDelete?: (id: string) => void
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const itemMap = useAtomValue(itemMapAtom);
@@ -99,8 +101,10 @@ const Subsection = ({
                 className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
                 onClick={(e) => {
                   e.stopPropagation()
+                  if (onDelete) {
+                    onDelete(subSection.id)
+                  }
                   setShowConfirm(false);
-                  //deleteSubSection(subSection.id);
                 }}
               >
                 Delete
