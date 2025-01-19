@@ -137,7 +137,7 @@ const LandingPage = () => {
       </section>
 
       {/* Preview Section */}
-      <section className="py-20 px-4 bg-white">
+      <section id="templates" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">
             Professional Resume Templates

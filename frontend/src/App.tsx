@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
 import Editor from "./pages/editor/editor";
-import LandingPage from "./pages/editor/landingpage";
+import LandingPage from "./pages/landingPage/landingPage";
 
 function App() {
   return <Routes>
