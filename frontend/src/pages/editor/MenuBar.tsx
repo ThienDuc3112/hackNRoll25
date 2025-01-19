@@ -17,7 +17,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
   const [timerange, setTimerange] = useState("");
 
   const [showGBulletInput, setGBulletInput] = useState(false);
-  const { newBulletPoint, newSubSection } = useEditorAtom();
+  const { newBulletPoint, newSubSection, deleteItem } = useEditorAtom();
   const [newGBulletPointName, setNewGBulletPointName] = useState("");
 
   const items = useMemo(() => menu.map(val => `MENU-${val}`), [menu])
@@ -33,7 +33,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
     >
       {/** Render the items from the menu */}
       <SortableContext strategy={verticalListSortingStrategy} items={items}>
-        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} />)}
+        {menu.map((itemId) => <MenuItemView itemId={itemId} key={itemId} onDelete={deleteItem} />)}
       </SortableContext>
 
       {/** "Add Subsection" UI */}

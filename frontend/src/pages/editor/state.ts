@@ -192,6 +192,18 @@ export const useEditorAtom = () => {
     })
   }
 
+  const deleteItem = (itemId: string) => {
+    setEditorState(prev => {
+      const newState = {
+        menu: prev.menu.filter(val => val !== itemId),
+        sections: prev.sections.map(section => ({ ...section, items: section.items.filter(val => val !== itemId) })),
+        itemMap: { ...prev.itemMap }
+      }
+      delete newState.itemMap[itemId]
+      return newState
+    })
+  }
+
   return {
     editorState,
     move,
@@ -202,6 +214,7 @@ export const useEditorAtom = () => {
     addPointToSubSection,
     newSection,
     filterItem,
+    deleteItem
   };
 };
 

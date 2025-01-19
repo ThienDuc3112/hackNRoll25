@@ -8,7 +8,7 @@ type BulletPointProps = {
   allowEdit?: boolean;
 };
 
-const BulletPoint = ({ point, onDelete, allowEdit = true }: BulletPointProps) => {
+const BulletPoint = ({ point, onDelete, allowEdit = false }: BulletPointProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
 
   return (
