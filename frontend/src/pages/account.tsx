@@ -63,39 +63,23 @@ const Account = () => {
         <div className="absolute top-3/4 right-1/4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-5" />
         <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-6" />
       </div>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span>Back</span>
+      </button>
 
-      {/* Rest of the component code remains the same */}
-      <header className="bg-white/80 backdrop-blur-sm shadow relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back</span>
-              </button>
-            </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <Home className="w-5 h-5" />
-                <span>Home</span>
-              </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <LogOut size={20} />
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Home Button */}
+      <button
+        onClick={() => navigate("/")}
+        className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <Home className="w-5 h-5" />
+        <span>Home</span>
+      </button>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -117,10 +101,17 @@ const Account = () => {
                   <p className="text-gray-600">{user.email}</p>
                 </div>
               </div>
-              <div className="border-t pt-4">
+              <div className="border-t pt-4 space-y-4">
                 <p className="text-sm text-gray-600">
                   Member since {new Date(user.joinDate).toLocaleDateString()}
                 </p>
+                <button
+                  onClick={() => navigate("/")}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <LogOut size={20} />
+                  Sign Out
+                </button>
               </div>
             </div>
           </div>
