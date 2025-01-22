@@ -43,13 +43,11 @@ const LandingPage = () => {
               >
                 Templates
               </a>
-              <button
-                onClick={() => {
-                  navigate("/editor");
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Get Started
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-105 w-24">
+                Log in
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:scale-105 w-24">
+                Sign up
               </button>
             </nav>
           </div>
