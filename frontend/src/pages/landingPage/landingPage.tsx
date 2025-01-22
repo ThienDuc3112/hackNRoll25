@@ -11,10 +11,8 @@ const Feature = ({ icon: Icon, title, description }) => (
   </div>
 );
 
-
-
 const LandingPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
@@ -22,10 +20,15 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <span className="text-4xl  font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">RBuild</span>
+              <span className="text-4xl  font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+                RBuild
+              </span>
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a href="#features" className="px-4 py-2 text-gray-700 hover:text-blue-600">
+              <a
+                href="#features"
+                className="px-4 py-2 text-gray-700 hover:text-blue-600"
+              >
                 Features
               </a>
               <a
@@ -40,9 +43,12 @@ const LandingPage = () => {
               >
                 Templates
               </a>
-              <button onClick={() => {
-                navigate("/editor")
-              }} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <button
+                onClick={() => {
+                  navigate("/editor");
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 Get Started
               </button>
             </nav>
@@ -62,7 +68,12 @@ const LandingPage = () => {
             job.
           </p>
           <div className="flex justify-center gap-4">
-            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <button
+              onClick={() => {
+                navigate("/editor");
+              }}
+              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
               Start Building <ArrowRight className="w-5 h-5" />
             </button>
             <button className="px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
@@ -118,7 +129,10 @@ const LandingPage = () => {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold text-blue-600">2</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2"> Drag and Drop Components</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                {" "}
+                Drag and Drop Components
+              </h3>
               <p className="text-gray-600">
                 Drag and drop components into resume
               </p>
@@ -190,7 +204,12 @@ const LandingPage = () => {
             Join thousands of job seekers who have successfully created their
             perfect resume with RBuild
           </p>
-          <button className="px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 mx-auto">
+          <button
+            onClick={() => {
+              navigate("/editor");
+            }}
+            className="px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 mx-auto"
+          >
             Get Started Now <ArrowRight className="w-5 h-5" />
           </button>
         </div>
@@ -201,9 +220,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4  text-center">
           <div>
             <span className="text-2xl font-bold text-white"></span>
-            <div className="mt-4">
-              Hack&Rolls 2025
-            </div>
+            <div className="mt-4">Hack&Rolls 2025</div>
           </div>
         </div>
       </footer>
