@@ -8,17 +8,16 @@ import BulletPoint from "./bulletpoint";
 const Subsection = ({
   subSection,
   allowEdit = false,
-  onDelete
+  onDelete,
 }: {
   subSection: SubsectionType;
   allowEdit?: boolean;
-  onDelete?: (id: string) => void
+  onDelete?: (id: string) => void;
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const itemMap = useAtomValue(itemMapAtom);
   const [showBulletInput, setBulletInput] = useState(false);
-  const { newBulletPoint, addPointToSubSection } =
-    useEditorAtom();
+  const { newBulletPoint, addPointToSubSection } = useEditorAtom();
   const [newBulletPointName, setNewBulletPointName] = useState("");
 
   return (
@@ -31,8 +30,8 @@ const Subsection = ({
           {allowEdit && (
             <button
               onClick={() => {
-                console.log("Show confirm")
-                setShowConfirm(true)
+                console.log("Show confirm");
+                setShowConfirm(true);
               }}
               className="p-1 hover:bg-gray-100 rounded"
             >
@@ -100,9 +99,9 @@ const Subsection = ({
               <button
                 className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
                 onClick={(e) => {
-                  e.stopPropagation()
+                  e.stopPropagation();
                   if (onDelete) {
-                    onDelete(subSection.id)
+                    onDelete(subSection.id);
                   }
                   setShowConfirm(false);
                 }}
@@ -114,7 +113,6 @@ const Subsection = ({
         </div>
       )}
     </div>
-
   );
 };
 

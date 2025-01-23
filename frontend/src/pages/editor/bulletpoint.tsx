@@ -9,18 +9,22 @@ type BulletPointProps = {
   allowEdit?: boolean;
 };
 
-const BulletPoint = ({ point, onDelete, allowEdit = false }: BulletPointProps) => {
+const BulletPoint = ({
+  point,
+  onDelete,
+  allowEdit = false,
+}: BulletPointProps) => {
   if (point === undefined) return null;
   const [showConfirm, setShowConfirm] = useState(false);
-  const [showEdit, setShowEdit] = useState(false)
-  const [editting, setEditting] = useState(false)
-  const [value, setValue] = useState(point.data)
-  const { updatePoint } = useEditorAtom()
+  const [showEdit, setShowEdit] = useState(false);
+  const [editting, setEditting] = useState(false);
+  const [value, setValue] = useState(point.data);
+  const { updatePoint } = useEditorAtom();
 
   return (
     <div
       onMouseEnter={() => {
-        if (!editting) setShowEdit(true)
+        if (!editting) setShowEdit(true);
       }}
       onMouseLeave={() => setShowEdit(false)}
       className="relative"
@@ -28,20 +32,26 @@ const BulletPoint = ({ point, onDelete, allowEdit = false }: BulletPointProps) =
       {/* Bullet Point Header */}
       <div className="flex justify-between items-center">
         <div className="flex-1 flex items-start">
-          {
-            editting ?
-              <form onSubmit={() => {
-                updatePoint(point.id, value)
-                setEditting(false)
-              }}>
-                <input className="w-52" type="text" value={value} onChange={(e) => setValue(e.target.value)} />
-              </form>
-              :
-              <>
-                <span className="text-gray-800 mr-2">•</span>
-                <span className="text-gray-800">{point.data}</span>
-              </>
-          }
+          {editting ? (
+            <form
+              onSubmit={() => {
+                updatePoint(point.id, value);
+                setEditting(false);
+              }}
+            >
+              <input
+                className="w-52"
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            </form>
+          ) : (
+            <>
+              <span className="text-gray-800 mr-2">•</span>
+              <span className="text-gray-800">{point.data}</span>
+            </>
+          )}
         </div>
         {allowEdit && (
           <button
@@ -52,19 +62,19 @@ const BulletPoint = ({ point, onDelete, allowEdit = false }: BulletPointProps) =
           </button>
         )}
       </div>
-      {
-        allowEdit && showEdit && <div
-          className="absolute top-[-30px] left-0 h-[20px]"
-        >
+      {allowEdit && showEdit && (
+        <div className="absolute top-[-30px] left-0 h-[20px]">
           <button
             onClick={() => {
-              setShowEdit(false)
-              setEditting(true)
+              setShowEdit(false);
+              setEditting(true);
             }}
             className="border rounded-md bg-blue-500 px-2 py-1 text-white"
-          >Edit</button>
+          >
+            Edit
+          </button>
         </div>
-      }
+      )}
 
       {/* Confirmation Modal */}
       {showConfirm && (

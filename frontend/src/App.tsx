@@ -6,13 +6,15 @@ import Signup from "./pages/signup";
 import Account from "./pages/account";
 
 function App() {
-  return <Routes>
-    <Route index element={<LandingPage />} />
-    <Route path="/editor" element={<Editor />} />
-    <Route path="/login" element={<Login />} />
-    <Route path="/signup" element={<Signup />} />
-    <Route path="/account" element={<Account />} />
-  </Routes>;
+  return (
+    <Routes>
+      <Route index element={<LandingPage />} />
+      <Route path="/editor" element={<Editor />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/account" element={<Account />} />
+    </Routes>
+  );
 }
 
 export default App;

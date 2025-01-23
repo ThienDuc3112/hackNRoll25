@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   sectionDes: {
     fontSize: 11,
     lineHeight: 1.4,
-  }
+  },
 });
 
 const Mydocument = ({
@@ -127,11 +127,21 @@ const Mydocument = ({
                   } else {
                     return (
                       <View style={styles.field}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 2 }}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            marginBottom: 2,
+                          }}
+                        >
                           <Text style={styles.sectionTitle}>{item.title}</Text>
-                          <Text style={styles.sectionTime}>{item.timeRange}</Text>
+                          <Text style={styles.sectionTime}>
+                            {item.timeRange}
+                          </Text>
                         </View>
-                        <Text style={styles.sectionDes}>{item.description}</Text>
+                        <Text style={styles.sectionDes}>
+                          {item.description}
+                        </Text>
                       </View>
                     );
                   }

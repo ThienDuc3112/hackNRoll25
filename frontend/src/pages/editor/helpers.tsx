@@ -92,7 +92,7 @@ export const ExportHandler = ({
               */}
               {/* @ts-expect-error */}
               {({ loading }: { loading: boolean }) => (
-                <Button variant="primary" disabled={loading} onClick={() => { }}>
+                <Button variant="primary" disabled={loading} onClick={() => {}}>
                   <Download size={16} />
                   {loading ? "Preparing..." : "Download PDF"}
                 </Button>

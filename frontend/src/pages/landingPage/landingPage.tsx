@@ -1,8 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  MutableRefObject,
+  LegacyRef,
+} from "react";
 import { ArrowRight, FileText, Layout, Workflow } from "lucide-react";
 import { useNavigate } from "react-router";
 
-const useIntersectionObserver = (ref, options = {}) => {
+const useIntersectionObserver = (
+  ref: MutableRefObject<HTMLDivElement | undefined>,
+  options = {},
+) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -22,16 +31,17 @@ const useIntersectionObserver = (ref, options = {}) => {
   return isVisible;
 };
 
-const AnimatedSection = ({ children, className = "" }) => {
-  const ref = useRef(null);
+const AnimatedSection = ({ children, className = "", id = "" }) => {
+  const ref = useRef<HTMLDivElement>();
   const isVisible = useIntersectionObserver(ref, { threshold: 0.1 });
 
   return (
     <div
-      ref={ref}
+      ref={ref as LegacyRef<HTMLDivElement>}
       className={`transition-all duration-1000 transform ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       } ${className}`}
+      id={id}
     >
       {children}
     </div>
@@ -252,7 +262,7 @@ const LandingPage = () => {
                 description:
                   "Export your resume in PDF format and start applying",
               },
-            ].map((step, index) => (
+            ].map((step) => (
               <div
                 key={step.number}
                 className="text-center transform hover:-translate-y-2 transition-transform duration-300"

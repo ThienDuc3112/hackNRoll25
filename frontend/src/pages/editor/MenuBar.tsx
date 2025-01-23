@@ -37,7 +37,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
 
   const items = useMemo(
     () => filteredMenu.map((val) => `MENU-${val}`),
-    [filteredMenu]
+    [filteredMenu],
   );
 
   const addNewSubsection = (subSection: SubsectionType) => {
@@ -49,46 +49,46 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
       className="flex h-full flex-col bg-gray-200 p-4 overflow-y-auto"
       style={{ width: `${dividerPosition}%` }}
     >
-<div className="bg-white rounded-lg shadow-md p-4 mb-6">
-  <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-    Filter Components
-  </h3>
-  
-  <div className="flex justify-between items-center gap-2">
-    <button
-      onClick={() => setOption("all")}
-      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-        option === "all"
-          ? "bg-blue-600 text-white shadow-md"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      All
-    </button>
-    
-    <button
-      onClick={() => setOption("point")}
-      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-        option === "point"
-          ? "bg-blue-600 text-white shadow-md"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      Points
-    </button>
-    
-    <button
-      onClick={() => setOption("sub")}
-      className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-        option === "sub"
-          ? "bg-blue-600 text-white shadow-md"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
-    >
-      Sections
-    </button>
-  </div>
-</div>
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+          Filter Components
+        </h3>
+
+        <div className="flex justify-between items-center gap-2">
+          <button
+            onClick={() => setOption("all")}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              option === "all"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setOption("point")}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              option === "point"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            Points
+          </button>
+
+          <button
+            onClick={() => setOption("sub")}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              option === "sub"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            Sections
+          </button>
+        </div>
+      </div>
       {/** Render the items from the menu */}
       <SortableContext strategy={verticalListSortingStrategy} items={items}>
         {filteredMenu.map((itemId) => (

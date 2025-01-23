@@ -70,7 +70,7 @@ const Editor = () => {
         move(
           e.active.id as string,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index
+          e.over.data.current.sortable.index,
         );
       }
     } else if (e.active.data.current?.type === "MENU_ITEM") {
@@ -83,7 +83,7 @@ const Editor = () => {
         move(
           activeId,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index
+          e.over.data.current.sortable.index,
         );
       } else {
         filterItem(activeId);
@@ -119,7 +119,7 @@ const Editor = () => {
         move(
           e.active.id as string,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index
+          e.over.data.current.sortable.index,
         );
       } else if (e.over.data.current.type === "MENU_ITEM") {
         // 2.3 Over Menu-Item
@@ -142,7 +142,7 @@ const Editor = () => {
         move(
           activeId,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index
+          e.over.data.current.sortable.index,
         );
       } else if (e.over.data.current.type === "MENU_ITEM") {
         moveMenuItem(activeId, e.over.data.current.sortable.index);
@@ -200,7 +200,7 @@ const Editor = () => {
               section={
                 (() => {
                   return editorState.sections.find(
-                    (val) => val.id === activeId.id
+                    (val) => val.id === activeId.id,
                   );
                 })()!
               }
@@ -216,7 +216,7 @@ const Editor = () => {
             />
           )}
         </DragOverlay>,
-        document.body
+        document.body,
       )}
     </DndContext>
   );

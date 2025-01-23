@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Home, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const Signup = () => {
   const navigate = useNavigate();

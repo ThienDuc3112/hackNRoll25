@@ -1,6 +1,10 @@
 import { SectionType } from "./types";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities"
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ItemView } from "./ItemView";
 
 type SectionProp = {
@@ -8,35 +12,34 @@ type SectionProp = {
 };
 
 export const Section = ({ section }: SectionProp) => {
-
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: section.id,
     data: {
-      type: "SECTION"
-    }
-  })
+      type: "SECTION",
+    },
+  });
   const style = {
     transition: transition,
-    transform: CSS.Transform.toString(transform)
-  }
+    transform: CSS.Transform.toString(transform),
+  };
 
   if (isDragging) {
-    return <div
-      className={`w-full mb-6 bg-gray-200`}
-      ref={setNodeRef}
-      style={style}
-    >
-      <div className="min-h-[120px]" />
-    </div>
-
+    return (
+      <div className={`w-full mb-6 bg-gray-200`} ref={setNodeRef} style={style}>
+        <div className="min-h-[120px]" />
+      </div>
+    );
   }
 
   return (
-    <div
-      className={`w-full mb-6`}
-      ref={setNodeRef}
-      style={style}
-    >
+    <div className={`w-full mb-6`} ref={setNodeRef} style={style}>
       {/* Section Name */}
       <h3
         className="text-lg font-medium text-gray-800 cursor-move mb-2"
@@ -57,8 +60,17 @@ export const Section = ({ section }: SectionProp) => {
               <span className="text-gray-400">Drop items here</span>
             </div>
           )}
-          <SortableContext items={section.items} strategy={verticalListSortingStrategy}>
-            {section.items.map((itemId) => <ItemView key={itemId} parentContainerId={section.id} itemId={itemId} />)}
+          <SortableContext
+            items={section.items}
+            strategy={verticalListSortingStrategy}
+          >
+            {section.items.map((itemId) => (
+              <ItemView
+                key={itemId}
+                parentContainerId={section.id}
+                itemId={itemId}
+              />
+            ))}
           </SortableContext>
         </div>
       </div>

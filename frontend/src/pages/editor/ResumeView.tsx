@@ -4,7 +4,10 @@ import { ContactInfo, ExportHandler } from "./helpers";
 import Button from "./button";
 import { Plus } from "lucide-react";
 import { Section } from "./section";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 type ResumeViewProps = {
   dividerPosition: number;
@@ -23,7 +26,7 @@ export const ResumeView = ({
   // For adding brand-new sections
   const [newSectionName, setNewSectionName] = useState<string>("");
 
-  const sectionIds = useMemo(() => sections.map(sex => sex.id), [sections])
+  const sectionIds = useMemo(() => sections.map((sex) => sex.id), [sections]);
 
   /** Contact info handlers */
   const [metadatas, setMetadatas] = useState<UserMetaDataItem[]>([]);
@@ -35,7 +38,7 @@ export const ResumeView = ({
   };
   const updateMetadatas = (id: number, value: string) => {
     setMetadatas(
-      metadatas.map((field) => (field.id === id ? { ...field, value } : field))
+      metadatas.map((field) => (field.id === id ? { ...field, value } : field)),
     );
   };
 
@@ -106,7 +109,9 @@ export const ResumeView = ({
                   <div key={field.id} className="flex items-center">
                     <ContactInfo
                       value={field.value}
-                      onChange={(value: string) => updateMetadatas(field.id, value)}
+                      onChange={(value: string) =>
+                        updateMetadatas(field.id, value)
+                      }
                       onRemove={() => removeMetadatas(field.id)}
                     />
                     {index < metadatas.length - 1 && (
@@ -130,7 +135,10 @@ export const ResumeView = ({
            * SortableContext that contains the sections
            * We'll show them inside this A4 container
            */}
-          <SortableContext strategy={verticalListSortingStrategy} items={sectionIds} >
+          <SortableContext
+            strategy={verticalListSortingStrategy}
+            items={sectionIds}
+          >
             {sections.map((section) => (
               <Section key={section.id} section={section} />
             ))}
