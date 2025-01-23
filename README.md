@@ -8,6 +8,7 @@ RBuild is an intuitive and user-friendly platform for creating ATS-friendly prof
 - **Drag & Drop Builder**: Simplifies the resume creation process with an intuitive drag-and-drop interface.
 - **Smart Sections**: Pre-built flexible sections to streamline the workflow.
 - **More...**
+
 ---
 
 ## Tech Stack
@@ -92,7 +93,7 @@ Contributions are welcome! To contribute:
 ---
 
 ## License
-RBuild is licensed under the [MIT License](LICENSE).
+RBuild is licensed under the [GNU Affero General Public License (AGPL)](LICENSE).
 
 ---
 
