@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft, Home, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Background from "@/components/background";
 
-export const Signup = () => {
+const Signup = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",

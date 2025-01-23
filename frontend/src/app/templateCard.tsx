@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FC, useState } from "react";
 
 type Prop = {
@@ -19,7 +20,10 @@ export const TemplateCard: FC<Prop> = ({ image, title, description }) => {
       }}
     >
       <div className="relative overflow-hidden">
-        <img
+        <Image
+          unoptimized
+          height={500}
+          width={300}
           src={image}
           alt={title}
           className="w-full transition-transform duration-500"

@@ -4,7 +4,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft, Home } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Background from "@/components/background";
 
-export const Login = () => {
+const Login = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
