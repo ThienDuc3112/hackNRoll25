@@ -1,9 +1,11 @@
-import { useState } from "react";
+"use client";
+import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Home, User } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useRouter } from "next/navigation";
+import Background from "@/components/background";
 
-export const Signup = () => {
-  const navigate = useNavigate();
+const Signup = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,14 +15,14 @@ export const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<Record<string, string>>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -73,11 +75,11 @@ export const Signup = () => {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     if (validateForm()) {
       console.log("Signup attempted with:", formData);
-      navigate("/editor");
+      router.push("/editor");
     }
   };
 
@@ -85,7 +87,7 @@ export const Signup = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-white px-4 relative">
       {/* Back Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => router.back()}
         className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -94,7 +96,7 @@ export const Signup = () => {
 
       {/* Home Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => router.push("/")}
         className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
         <Home className="w-5 h-5" />
@@ -102,19 +104,12 @@ export const Signup = () => {
       </button>
 
       {/* Enhanced Background Decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-1" />
-        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-2" />
-        <div className="absolute -bottom-40 left-20 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-3" />
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-4" />
-        <div className="absolute top-3/4 right-1/4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-5" />
-        <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-6" />
-      </div>
+      <Background />
 
       <div className="w-full max-w-md z-10">
         {/* Logo */}
         <div
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
           className="text-4xl font-bold text-center mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 cursor-pointer"
         >
           RBuild
@@ -260,7 +255,7 @@ export const Signup = () => {
           <p className="mt-6 text-center text-gray-600">
             Already have an account?{" "}
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => router.push("/login")}
               className="text-blue-600 hover:text-blue-800 transition-colors"
             >
               Sign in

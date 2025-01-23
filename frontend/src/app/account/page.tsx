@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
+"use client";
+import { ChangeEventHandler, useState } from "react";
 import {
   FileText,
   Edit2,
@@ -10,9 +10,10 @@ import {
   ArrowLeft,
   Home,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Account = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [resumes, setResumes] = useState([
     {
       id: "1",
@@ -36,19 +37,19 @@ const Account = () => {
     joinDate: "2024-01-01",
   });
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload: ChangeEventHandler<HTMLInputElement> = (event) => {
     const file = event.target.files?.[0];
     if (file) {
       console.log("Uploading file:", file.name);
     }
   };
 
-  const handleDeleteResume = (id) => {
+  const handleDeleteResume = (id: string) => {
     setResumes(resumes.filter((resume) => resume.id !== id));
   };
 
-  const handleEditResume = (id) => {
-    navigate(`/editor/${id}`);
+  const handleEditResume = (id: string) => {
+    router.push(`/editor/${id}`);
   };
 
   return (
@@ -64,7 +65,7 @@ const Account = () => {
       </div>
       {/* Back Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => router.push("/")}
         className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -73,7 +74,7 @@ const Account = () => {
 
       {/* Home Button */}
       <button
-        onClick={() => navigate("/")}
+        onClick={() => router.push("/")}
         className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
       >
         <Home className="w-5 h-5" />
@@ -105,7 +106,7 @@ const Account = () => {
                   Member since {new Date(user.joinDate).toLocaleDateString()}
                 </p>
                 <button
-                  onClick={() => navigate("/")}
+                  onClick={() => router.push("/")}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <LogOut size={20} />

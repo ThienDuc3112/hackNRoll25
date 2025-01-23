@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { useCallback, useState } from "react";
 import { activeAtom, useEditorAtom } from "./state";
 import { MenuBar } from "./MenuBar";
 import { ResumeView } from "./ResumeView";
@@ -15,8 +16,10 @@ import { Section } from "./section";
 import { ItemView } from "./ItemView";
 import { MenuItemView } from "./MenuItemView";
 import { ArrowLeft, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Editor = () => {
+  const router = useRouter();
   // Divider state for left & right panes
   const [dividerPosition, setDividerPosition] = useState(40);
   // Access your editor state & actions
@@ -28,6 +31,11 @@ const Editor = () => {
     filterItem,
     moveMenuItem,
   } = useEditorAtom();
+  const [activeId, setActive] = useAtom(activeAtom);
+
+  const getSection = useCallback(() => {
+    return editorState.sections.find((val) => val.id === activeId?.id);
+  }, [editorState.sections, activeId]);
 
   /** Draggable divider logic */
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -44,8 +52,6 @@ const Editor = () => {
     window.addEventListener("mouseup", handleMouseUp);
   };
 
-  const [activeId, setActive] = useAtom(activeAtom);
-
   const onDragStart = (e: DragStartEvent) => {
     setActive({
       type: e.active.data.current!.type,
@@ -54,7 +60,12 @@ const Editor = () => {
   };
 
   const onDragOver = (e: DragOverEvent) => {
-    console.log("onDragOver called", e.over, e.active);
+    console.log(
+      new Date().getMilliseconds(),
+      "onDragOver called",
+      e.over,
+      e.active
+    );
 
     if (!e.over || !e.over.data.current) {
       return;
@@ -63,30 +74,14 @@ const Editor = () => {
     if (e.active.data.current?.type === "ITEM") {
       // Drag over section
       if (e.over.data.current.type === "SECTION") {
-        // 1.1 Over Section
+        // 1 Over Section
         move(e.active.id as string, e.over.id as string, 0);
-      } else if (e.over.data.current.type === "ITEM") {
-        // 1.2 Over Item
-        move(
-          e.active.id as string,
-          e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index,
-        );
       }
     } else if (e.active.data.current?.type === "MENU_ITEM") {
       const activeId = (e.active.id as string).substring(5);
       if (e.over.data.current.type === "SECTION") {
-        // 3.1 Over Section
+        // 3 Over Section
         move(activeId, e.over.id as string, 0);
-      } else if (e.over.data.current.type === "ITEM") {
-        // 3.2 Over Item
-        move(
-          activeId,
-          e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index,
-        );
-      } else {
-        filterItem(activeId);
       }
     }
   };
@@ -104,7 +99,7 @@ const Editor = () => {
       ) {
         return;
       }
-      let targetIndex = e.over.data.current!.sortable.index;
+      const targetIndex = e.over.data.current!.sortable.index;
       moveSection(e.active.id as string, targetIndex);
     } else if (e.active.data.current?.type === "ITEM") {
       // 2, Item Dragging
@@ -119,7 +114,7 @@ const Editor = () => {
         move(
           e.active.id as string,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index,
+          e.over.data.current.sortable.index
         );
       } else if (e.over.data.current.type === "MENU_ITEM") {
         // 2.3 Over Menu-Item
@@ -142,7 +137,7 @@ const Editor = () => {
         move(
           activeId,
           e.over.data.current.parentContainerId,
-          e.over.data.current.sortable.index,
+          e.over.data.current.sortable.index
         );
       } else if (e.over.data.current.type === "MENU_ITEM") {
         moveMenuItem(activeId, e.over.data.current.sortable.index);
@@ -164,7 +159,12 @@ const Editor = () => {
       <div className="flex flex-col h-screen">
         {/* Top Bar */}
         <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 h-12 flex justify-between items-center px-4 shrink-0">
-          <button className="px-3 py-1.5 text-sm rounded hover:bg-gray-100 transition-colors flex items-center gap-1">
+          <button
+            className="px-3 py-1.5 text-sm rounded hover:bg-gray-100 transition-colors flex items-center gap-1"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
             <ArrowLeft size={16} />
             Back to Landing Page
           </button>
@@ -196,27 +196,19 @@ const Editor = () => {
       {createPortal(
         <DragOverlay>
           {activeId && activeId.type === "SECTION" && (
-            <Section
-              section={
-                (() => {
-                  return editorState.sections.find(
-                    (val) => val.id === activeId.id,
-                  );
-                })()!
-              }
-            />
+            <Section section={getSection()!} />
           )}
           {activeId && activeId.type === "ITEM" && (
             <ItemView parentContainerId="" itemId={activeId.id as string} />
           )}
           {activeId && activeId.type === "MENU_ITEM" && (
             <MenuItemView
-              onDelete={(_) => {}}
+              onDelete={() => {}}
               itemId={(activeId.id as string).substring(5)}
             />
           )}
         </DragOverlay>,
-        document.body,
+        document.body
       )}
     </DndContext>
   );

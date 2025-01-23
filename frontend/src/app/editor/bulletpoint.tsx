@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { PointType } from "./types";
@@ -14,12 +15,12 @@ const BulletPoint = ({
   onDelete,
   allowEdit = false,
 }: BulletPointProps) => {
-  if (point === undefined) return null;
   const [showConfirm, setShowConfirm] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [editting, setEditting] = useState(false);
   const [value, setValue] = useState(point.data);
   const { updatePoint } = useEditorAtom();
+  if (point === undefined) return null;
 
   return (
     <div

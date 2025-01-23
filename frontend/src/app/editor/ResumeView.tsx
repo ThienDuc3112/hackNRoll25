@@ -1,3 +1,4 @@
+"use client";
 import { useMemo, useState } from "react";
 import { SectionType, UserMetaDataItem } from "./types";
 import { ContactInfo, ExportHandler } from "./helpers";
@@ -38,7 +39,7 @@ export const ResumeView = ({
   };
   const updateMetadatas = (id: number, value: string) => {
     setMetadatas(
-      metadatas.map((field) => (field.id === id ? { ...field, value } : field)),
+      metadatas.map((field) => (field.id === id ? { ...field, value } : field))
     );
   };
 

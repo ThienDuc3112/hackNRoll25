@@ -1,125 +1,14 @@
-import {
-  useEffect,
-  useState,
-  useRef,
-  MutableRefObject,
-  LegacyRef,
-} from "react";
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { AnimatedSection } from "./animatedSection";
+import { Feature } from "./feature";
 import { ArrowRight, FileText, Layout, Workflow } from "lucide-react";
-import { useNavigate } from "react-router";
+import { TemplateCard } from "./templateCard";
+import Background from "@/components/background";
 
-const useIntersectionObserver = (
-  ref: MutableRefObject<HTMLDivElement | undefined>,
-  options = {},
-) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsVisible(entry.isIntersecting);
-    }, options);
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [ref, options]);
-
-  return isVisible;
-};
-
-const AnimatedSection = ({ children, className = "", id = "" }) => {
-  const ref = useRef<HTMLDivElement>();
-  const isVisible = useIntersectionObserver(ref, { threshold: 0.1 });
-
-  return (
-    <div
-      ref={ref as LegacyRef<HTMLDivElement>}
-      className={`transition-all duration-1000 transform ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      } ${className}`}
-      id={id}
-    >
-      {children}
-    </div>
-  );
-};
-
-const Feature = ({ icon: Icon, title, description, delay = 0 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      className="p-6 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg transition-all duration-300"
-      style={{
-        transform: isHovered ? "scale(1.05)" : "scale(1)",
-        animation: `fadeUp 0.6s ease-out ${delay}ms backwards`,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div
-        className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 transition-all duration-300"
-        style={{ transform: isHovered ? "rotateY(180deg)" : "rotateY(0deg)" }}
-      >
-        <Icon className="w-6 h-6 text-blue-600" />
-      </div>
-      <h3
-        className="text-xl font-semibold mb-2 transition-colors duration-300"
-        style={{ color: isHovered ? "#3B82F6" : "#1F2937" }}
-      >
-        {title}
-      </h3>
-      <p
-        className="text-gray-600 transition-all duration-300"
-        style={{ transform: isHovered ? "translateX(10px)" : "translateX(0)" }}
-      >
-        {description}
-      </p>
-    </div>
-  );
-};
-
-const TemplateCard = ({ image, title, description }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      className="rounded-lg overflow-hidden shadow-lg transition-all duration-500"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        transform: isHovered ? "scale(1.05)" : "scale(1)",
-      }}
-    >
-      <div className="relative overflow-hidden">
-        <img
-          src={image}
-          alt={title}
-          className="w-full transition-transform duration-500"
-          style={{
-            transform: isHovered ? "scale(1.1)" : "scale(1)",
-          }}
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300"
-          style={{ opacity: isHovered ? 1 : 0 }}
-        >
-          <div className="absolute bottom-4 left-4 right-4 text-white">
-            <h3 className="font-semibold mb-1">{title}</h3>
-            <p className="text-sm">{description}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const LandingPage = () => {
-  const navigate = useNavigate();
+export default function Home() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -127,18 +16,10 @@ const LandingPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-1" />
-        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-2" />
-        <div className="absolute -bottom-40 left-20 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float-3" />
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-4" />
-        <div className="absolute top-3/4 right-1/4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-5" />
-        <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-float-6" />
-      </div>
+      <Background />
 
       {/* Header */}
       <header
@@ -172,7 +53,7 @@ const LandingPage = () => {
                 </a>
               ))}
               <button
-                onClick={() => navigate("/editor")}
+                onClick={() => router.push("/editor")}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
               >
                 Get Started
@@ -194,7 +75,7 @@ const LandingPage = () => {
           </p>
           <div className="flex justify-center gap-4">
             <button
-              onClick={() => navigate("/editor")}
+              onClick={() => router.push("/editor")}
               className="group px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2 overflow-hidden relative"
             >
               <span className="relative z-10">Start Building</span>
@@ -317,7 +198,7 @@ const LandingPage = () => {
             resume with RBuild
           </p>
           <button
-            onClick={() => navigate("/editor")}
+            onClick={() => router.push("/editor")}
             className="group px-8 py-3 bg-white text-blue-600 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2 mx-auto"
           >
             Get Started Now
@@ -337,6 +218,4 @@ const LandingPage = () => {
       </footer>
     </div>
   );
-};
-
-export default LandingPage;
+}

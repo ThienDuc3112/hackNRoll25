@@ -119,14 +119,14 @@ const Mydocument = ({
                   const item = itemMap[itemId];
                   if (item.type === "POINT") {
                     return (
-                      <View style={styles.pointData}>
+                      <View key={itemId} style={styles.pointData}>
                         <Text style={styles.bullet}>•</Text>
                         <Text style={styles.pointContent}>{item.data}</Text>
                       </View>
                     );
                   } else {
                     return (
-                      <View style={styles.field}>
+                      <View key={itemId} style={styles.field}>
                         <View
                           style={{
                             flexDirection: "row",

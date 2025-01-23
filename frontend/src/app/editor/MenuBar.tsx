@@ -1,3 +1,4 @@
+"use client";
 import { useMemo, useState } from "react";
 import { IdItemType, SubsectionType } from "./types";
 import { itemMapAtom, useEditorAtom } from "./state";
@@ -25,7 +26,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
     } else {
       return menu;
     }
-  }, [menu, option]);
+  }, [menu, option, itemMap]);
   const [showNameInput, setShowNameInput] = useState(false);
   const [newSubsectionName, setNewSubsectionName] = useState("");
   const [newSubsectionSubTitle, setNewSubsectionSubTitle] = useState("");
@@ -37,7 +38,7 @@ export const MenuBar = ({ dividerPosition, menu }: MenuBarProps) => {
 
   const items = useMemo(
     () => filteredMenu.map((val) => `MENU-${val}`),
-    [filteredMenu],
+    [filteredMenu]
   );
 
   const addNewSubsection = (subSection: SubsectionType) => {
