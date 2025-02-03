@@ -1,3 +1,5 @@
+version: "0.1"
+name: rbuild-backend
 services:
   psql_bp:
     image: postgres:latest
